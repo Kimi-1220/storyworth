@@ -1,8 +1,10 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
+import { put } from "@vercel/blob";
 
-// 開発用: public/uploads にローカル保存。本番ではS3/R2に差し替える。
+// Vercel上は Vercel Blob（BLOB_READ_WRITE_TOKEN があれば自動で使う）。
+// ローカル開発は public/uploads に保存。
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 
 const EXT_BY_MIME: Record<string, string> = {
@@ -25,11 +27,20 @@ export function mediaTypeOf(mime: string): "image" | "audio" | null {
   return null;
 }
 
-// 保存して public/ からの相対パス（例: /uploads/xxx.jpg）を返す
+// 保存してURL（Blob: 絶対URL / ローカル: /uploads/xxx.jpg）を返す
 export async function saveMedia(data: Buffer, mime: string): Promise<string> {
-  await mkdir(UPLOAD_DIR, { recursive: true });
   const ext = EXT_BY_MIME[mime] ?? "";
   const name = `${randomUUID()}${ext}`;
+
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    const blob = await put(`uploads/${name}`, data, {
+      access: "public",
+      contentType: mime,
+    });
+    return blob.url;
+  }
+
+  await mkdir(UPLOAD_DIR, { recursive: true });
   await writeFile(path.join(UPLOAD_DIR, name), data);
   return `/uploads/${name}`;
 }
