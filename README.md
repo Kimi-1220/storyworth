@@ -9,15 +9,38 @@
 
 ## 開発（MVP）
 
-Next.js (App Router) + Prisma (SQLite) + LINE Messaging API。
+Next.js (App Router) + Prisma (PostgreSQL) + LINE Messaging API。
 
 ```bash
 npm install
-cp .env.example .env        # LINEのトークン等を設定（無くてもWeb部分は動く）
-npm run db:push             # SQLiteにスキーマ反映
+cp .env.example .env        # DATABASE_URL（Postgres）を設定。LINEトークンは無くてもWeb部分は動く
+npm run db:push             # Postgresにスキーマ反映
 npm run db:seed             # data/questions.json から質問89問を投入
 npm run dev                 # http://localhost:3000
 ```
+
+DBは [Neon](https://neon.tech) の無料枠が手軽（ローカル用とVercel用で同じものを使ってよい）。
+
+## Vercelへのデプロイ
+
+1. **DBを用意**: [Neon](https://neon.tech) で無料のPostgresを作成し、接続URLを控える
+2. **Vercelにインポート**: [vercel.com](https://vercel.com) にGitHubでログイン → `Add New > Project` → このリポジトリを選択
+   （ブランチ `claude/japan-storyworth-platform-djluym` をデプロイ対象にするか、mainにマージしてから）
+3. **環境変数を設定**（Project Settings → Environment Variables）:
+   - `DATABASE_URL` … NeonのURL
+   - `CRON_SECRET` … 長いランダム文字列（週次cronの認証。Vercelがcron実行時に自動で付与する）
+   - `APP_BASE_URL` … `https://<プロジェクト名>.vercel.app`
+   - `LINE_CHANNEL_ACCESS_TOKEN` / `LINE_CHANNEL_SECRET` … LINE連携を使う場合
+4. **Blobストアを作成**（写真・音声の保存先）: Vercelダッシュボード → Storage → Blob → Create。
+   `BLOB_READ_WRITE_TOKEN` がプロジェクトに自動追加される
+5. **初回だけスキーマ反映とseed**を手元から実行:
+   ```bash
+   DATABASE_URL="<NeonのURL>" npm run db:push
+   DATABASE_URL="<NeonのURL>" npm run db:seed
+   ```
+6. デプロイ完了後、`https://<プロジェクト名>.vercel.app/dashboard` から試せる
+
+週次の質問送信は `vercel.json` のcron（**毎週日曜 9:00 JST**）で自動実行される。
 
 ### できること（現状）
 

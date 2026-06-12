@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postinstall": "prisma generate",
     "start": "next start",
     "db:push": "prisma db push",
     "db:seed": "node scripts/seed.mjs",
@@ -13,6 +14,7 @@
   "dependencies": {
     "@line/bot-sdk": "^10.0.0",
     "@prisma/client": "^6.8.0",
+    "@vercel/blob": "^2.4.0",
     "next": "^15.3.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
