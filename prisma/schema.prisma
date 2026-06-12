@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// 語り手（親・祖母など、質問に答える人）
+model Storyteller {
+  id         String   @id @default(cuid())
+  name       String
+  lineUserId String?  @unique
+  linkCode   String   @unique // LINE連携用の6桁コード
+  createdAt  DateTime @default(now())
+  prompts    Prompt[]
+}
+
+// 質問マスタ（data/questions.json から seed で投入）
+model Question {
+  id        String   @id @default(cuid())
+  category  String
+  source    String // "storyworth" | "vault"
+  text      String   @unique
+  sortOrder Int
+  prompts   Prompt[]
+}
+
+// 語り手への出題（質問のインスタンス）
+model Prompt {
+  id            String      @id @default(cuid())
+  storyteller   Storyteller @relation(fields: [storytellerId], references: [id])
+  storytellerId String
+  question      Question    @relation(fields: [questionId], references: [id])
+  questionId    String
+  status        String      @default("open") // "open" | "answered" | "skipped"
+  sentAt        DateTime?
+  createdAt     DateTime    @default(now())
+  answers       Answer[]
+
+  @@unique([storytellerId, questionId])
+}
+
+// 回答。1つの出題に複数回答可（テキスト + 写真 + 音声の組み合わせ）
+model Answer {
+  id        String   @id @default(cuid())
+  prompt    Prompt   @relation(fields: [promptId], references: [id])
+  promptId  String
+  type      String // "text" | "image" | "audio"
+  text      String?
+  mediaPath String? // public/ 配下の相対パス（本番ではS3等のキーに置き換え）
+  via       String // "line" | "web"
+  createdAt DateTime @default(now())
+}

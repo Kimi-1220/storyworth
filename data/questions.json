@@ -1,0 +1,536 @@
+[
+  {
+    "category": "幼少期",
+    "source": "storyworth",
+    "text": "いちばん古い記憶は何ですか？",
+    "sortOrder": 1
+  },
+  {
+    "category": "幼少期",
+    "source": "storyworth",
+    "text": "育った家について教えてください。",
+    "sortOrder": 2
+  },
+  {
+    "category": "幼少期",
+    "source": "storyworth",
+    "text": "子どもの頃の好きな食べ物は何でしたか？",
+    "sortOrder": 3
+  },
+  {
+    "category": "幼少期",
+    "source": "storyworth",
+    "text": "好きだった遊びやおもちゃは何でしたか？",
+    "sortOrder": 4
+  },
+  {
+    "category": "幼少期",
+    "source": "storyworth",
+    "text": "あなたの寝室はどんな様子でしたか？",
+    "sortOrder": 5
+  },
+  {
+    "category": "幼少期",
+    "source": "storyworth",
+    "text": "子どもの頃いちばん仲が良かった友達は誰でしたか？",
+    "sortOrder": 6
+  },
+  {
+    "category": "幼少期",
+    "source": "vault",
+    "text": "あなたの一番最初の記憶は何ですか？",
+    "sortOrder": 7
+  },
+  {
+    "category": "幼少期",
+    "source": "vault",
+    "text": "育った家について、どんなことを覚えていますか？",
+    "sortOrder": 8
+  },
+  {
+    "category": "幼少期",
+    "source": "vault",
+    "text": "子どもの頃、家での typical な一日はどんな様子でしたか？",
+    "sortOrder": 9
+  },
+  {
+    "category": "幼少期",
+    "source": "vault",
+    "text": "子どもの頃、何をするのが大好きでしたか？",
+    "sortOrder": 10
+  },
+  {
+    "category": "幼少期",
+    "source": "vault",
+    "text": "初めての友達は誰で、一緒に何をしていましたか？",
+    "sortOrder": 11
+  },
+  {
+    "category": "幼少期",
+    "source": "vault",
+    "text": "子どもの頃、何をすると叱られましたか？",
+    "sortOrder": 12
+  },
+  {
+    "category": "幼少期",
+    "source": "vault",
+    "text": "幼い頃、何が一番怖かったですか？",
+    "sortOrder": 13
+  },
+  {
+    "category": "幼少期",
+    "source": "vault",
+    "text": "どんな匂い・音・味が、あなたを子ども時代に引き戻しますか？",
+    "sortOrder": 14
+  },
+  {
+    "category": "幼少期",
+    "source": "vault",
+    "text": "子どもの頃に起きた、一番おかしかった出来事は何ですか？",
+    "sortOrder": 15
+  },
+  {
+    "category": "幼少期",
+    "source": "vault",
+    "text": "あなたの子ども時代について、人々に分かってほしいことは何ですか？",
+    "sortOrder": 16
+  },
+  {
+    "category": "家族と育ててくれた人々",
+    "source": "storyworth",
+    "text": "あなたのお母さんはどんな人でしたか？",
+    "sortOrder": 17
+  },
+  {
+    "category": "家族と育ててくれた人々",
+    "source": "storyworth",
+    "text": "あなたのお父さんはどんな人でしたか？",
+    "sortOrder": 18
+  },
+  {
+    "category": "家族と育ててくれた人々",
+    "source": "storyworth",
+    "text": "祖父母から何を学びましたか？",
+    "sortOrder": 19
+  },
+  {
+    "category": "家族と育ててくれた人々",
+    "source": "storyworth",
+    "text": "一番よく覚えている家族の伝統は何ですか？",
+    "sortOrder": 20
+  },
+  {
+    "category": "家族と育ててくれた人々",
+    "source": "storyworth",
+    "text": "あなたの家では、祝日はどんな様子でしたか？",
+    "sortOrder": 21
+  },
+  {
+    "category": "家族と育ててくれた人々",
+    "source": "vault",
+    "text": "あなたを育ててくれた人について、一番よく覚えていることは何ですか？",
+    "sortOrder": 22
+  },
+  {
+    "category": "家族と育ててくれた人々",
+    "source": "vault",
+    "text": "家族から受け継いで、今も持ち続けている習慣や言葉はありますか？",
+    "sortOrder": 23
+  },
+  {
+    "category": "家族と育ててくれた人々",
+    "source": "vault",
+    "text": "あなたの家族が持っていて、大好きだった伝統は何ですか？",
+    "sortOrder": 24
+  },
+  {
+    "category": "家族と育ててくれた人々",
+    "source": "vault",
+    "text": "家族の誰かが、言葉にせずに教えてくれた教訓は何ですか？",
+    "sortOrder": 25
+  },
+  {
+    "category": "家族と育ててくれた人々",
+    "source": "vault",
+    "text": "家族の中で、あなたを最も形作ったのは誰だと思いますか？それはどのように？",
+    "sortOrder": 26
+  },
+  {
+    "category": "家族と育ててくれた人々",
+    "source": "vault",
+    "text": "若い頃には分からなかったけれど、今は家族に感謝していることは何ですか？",
+    "sortOrder": 27
+  },
+  {
+    "category": "家族と育ててくれた人々",
+    "source": "vault",
+    "text": "まだ聞けるうちに、家族の誰かに聞いておけばよかったと思うことは何ですか？",
+    "sortOrder": 28
+  },
+  {
+    "category": "成長と自分探し",
+    "source": "storyworth",
+    "text": "10代の頃、好きだった音楽は何でしたか？",
+    "sortOrder": 29
+  },
+  {
+    "category": "成長と自分探し",
+    "source": "storyworth",
+    "text": "大人になったら何になりたいと思っていましたか？",
+    "sortOrder": 30
+  },
+  {
+    "category": "成長と自分探し",
+    "source": "storyworth",
+    "text": "印象に残っている先生について教えてください。",
+    "sortOrder": 31
+  },
+  {
+    "category": "成長と自分探し",
+    "source": "storyworth",
+    "text": "高校を卒業した後、何をしましたか？",
+    "sortOrder": 32
+  },
+  {
+    "category": "成長と自分探し",
+    "source": "storyworth",
+    "text": "初めて持った車は何でしたか？",
+    "sortOrder": 33
+  },
+  {
+    "category": "成長と自分探し",
+    "source": "vault",
+    "text": "若い頃に抱いていた、誰も知らなかった夢は何ですか？",
+    "sortOrder": 34
+  },
+  {
+    "category": "成長と自分探し",
+    "source": "vault",
+    "text": "「ようやく大人になった」と感じた瞬間はどんな時でしたか？",
+    "sortOrder": 35
+  },
+  {
+    "category": "成長と自分探し",
+    "source": "vault",
+    "text": "学生時代の一番強い記憶は何ですか？",
+    "sortOrder": 36
+  },
+  {
+    "category": "成長と自分探し",
+    "source": "vault",
+    "text": "10代の自分にすぐ引き戻してくれる曲や映画は何ですか？",
+    "sortOrder": 37
+  },
+  {
+    "category": "成長と自分探し",
+    "source": "vault",
+    "text": "若い頃に世界について信じていたことで、後に違っていたと分かったことは何ですか？",
+    "sortOrder": 38
+  },
+  {
+    "category": "成長と自分探し",
+    "source": "vault",
+    "text": "若い頃の経験で、人生の方向を変えたものは何ですか？",
+    "sortOrder": 39
+  },
+  {
+    "category": "愛と人間関係",
+    "source": "storyworth",
+    "text": "配偶者とはどのように出会いましたか？",
+    "sortOrder": 40
+  },
+  {
+    "category": "愛と人間関係",
+    "source": "storyworth",
+    "text": "結婚式の日はどんな様子でしたか？",
+    "sortOrder": 41
+  },
+  {
+    "category": "愛と人間関係",
+    "source": "storyworth",
+    "text": "初めて二人で暮らした家はどんな所でしたか？",
+    "sortOrder": 42
+  },
+  {
+    "category": "愛と人間関係",
+    "source": "storyworth",
+    "text": "若いカップルにどんなアドバイスをしますか？",
+    "sortOrder": 43
+  },
+  {
+    "category": "愛と人間関係",
+    "source": "vault",
+    "text": "初めて恋に落ちた時のことを、どんなふうに覚えていますか？",
+    "sortOrder": 44
+  },
+  {
+    "category": "愛と人間関係",
+    "source": "vault",
+    "text": "人間関係について受けた、一番のアドバイスは何ですか？",
+    "sortOrder": 45
+  },
+  {
+    "category": "愛と人間関係",
+    "source": "vault",
+    "text": "愛する人との小さな瞬間で、よく思い返すものは何ですか？",
+    "sortOrder": 46
+  },
+  {
+    "category": "愛と人間関係",
+    "source": "vault",
+    "text": "あなたの人生で、最も予想外だった友情は誰とのものですか？",
+    "sortOrder": 47
+  },
+  {
+    "category": "仕事・目的・野心",
+    "source": "storyworth",
+    "text": "初めての仕事は何でしたか？",
+    "sortOrder": 48
+  },
+  {
+    "category": "仕事・目的・野心",
+    "source": "storyworth",
+    "text": "何を生業にしていましたか？そして、なぜそれを選びましたか？",
+    "sortOrder": 49
+  },
+  {
+    "category": "仕事・目的・野心",
+    "source": "storyworth",
+    "text": "これまでで一番大変だった仕事は何でしたか？",
+    "sortOrder": 50
+  },
+  {
+    "category": "仕事・目的・野心",
+    "source": "storyworth",
+    "text": "今でも誇りに思える仕事の思い出は何ですか？",
+    "sortOrder": 51
+  },
+  {
+    "category": "仕事・目的・野心",
+    "source": "vault",
+    "text": "初めての仕事は何で、そこから何を学びましたか？",
+    "sortOrder": 52
+  },
+  {
+    "category": "仕事・目的・野心",
+    "source": "vault",
+    "text": "これまでで最も誇りに感じた仕事は何ですか？",
+    "sortOrder": 53
+  },
+  {
+    "category": "仕事・目的・野心",
+    "source": "vault",
+    "text": "大人になったら何になりたかったですか？そして、それはどう変わりましたか？",
+    "sortOrder": 54
+  },
+  {
+    "category": "仕事・目的・野心",
+    "source": "vault",
+    "text": "仕事や人生の進路で、最も難しかった決断は何ですか？",
+    "sortOrder": 55
+  },
+  {
+    "category": "親であること・子育て",
+    "source": "storyworth",
+    "text": "お子さんがそれぞれ生まれた日は、どんな様子でしたか？",
+    "sortOrder": 56
+  },
+  {
+    "category": "親であること・子育て",
+    "source": "storyworth",
+    "text": "親であることで、一番大変だと感じたことは何ですか？",
+    "sortOrder": 57
+  },
+  {
+    "category": "親であること・子育て",
+    "source": "storyworth",
+    "text": "子どもとの、決して忘れられない瞬間は何ですか？",
+    "sortOrder": 58
+  },
+  {
+    "category": "親であること・子育て",
+    "source": "storyworth",
+    "text": "子どもたちに、自分の子ども時代について何を覚えていてほしいですか？",
+    "sortOrder": 59
+  },
+  {
+    "category": "親であること・子育て",
+    "source": "vault",
+    "text": "親になって、一番驚いたことは何ですか？",
+    "sortOrder": 60
+  },
+  {
+    "category": "親であること・子育て",
+    "source": "vault",
+    "text": "子どもとの瞬間で、あなたにとって最も大切だったものは何ですか？",
+    "sortOrder": 61
+  },
+  {
+    "category": "親であること・子育て",
+    "source": "vault",
+    "text": "あなたの姿を見て、子どもたちが学んでくれたらと願うことは何ですか？",
+    "sortOrder": 62
+  },
+  {
+    "category": "親であること・子育て",
+    "source": "vault",
+    "text": "子どもがしたことで、涙が出るほど笑ったことは何ですか？",
+    "sortOrder": 63
+  },
+  {
+    "category": "困難な時期と回復力",
+    "source": "storyworth",
+    "text": "人生で一番つらかった時期はいつですか？",
+    "sortOrder": 64
+  },
+  {
+    "category": "困難な時期と回復力",
+    "source": "storyworth",
+    "text": "どのようにして困難な時期を乗り越えましたか？",
+    "sortOrder": 65
+  },
+  {
+    "category": "困難な時期と回復力",
+    "source": "storyworth",
+    "text": "誰も知らなかったと思う、あなたが抱えていた葛藤は何ですか？",
+    "sortOrder": 66
+  },
+  {
+    "category": "困難な時期と回復力",
+    "source": "vault",
+    "text": "人生で最もつらかった時期はいつで、どうやって乗り越えましたか？",
+    "sortOrder": 67
+  },
+  {
+    "category": "困難な時期と回復力",
+    "source": "vault",
+    "text": "今のあなたを形作った喪失や苦しみは何ですか？",
+    "sortOrder": 68
+  },
+  {
+    "category": "困難な時期と回復力",
+    "source": "vault",
+    "text": "誰も気づいていなくても、自分が最も強かったと感じたのはいつですか？",
+    "sortOrder": 69
+  },
+  {
+    "category": "困難な時期と回復力",
+    "source": "vault",
+    "text": "物事が不可能に思えた時、あなたを支えてくれたものは何ですか？",
+    "sortOrder": 70
+  },
+  {
+    "category": "喜び・楽しさ・明るい側面",
+    "source": "storyworth",
+    "text": "一番好きな旅行の思い出は何ですか？",
+    "sortOrder": 71
+  },
+  {
+    "category": "喜び・楽しさ・明るい側面",
+    "source": "storyworth",
+    "text": "決して忘れられない食事は何ですか？",
+    "sortOrder": 72
+  },
+  {
+    "category": "喜び・楽しさ・明るい側面",
+    "source": "storyworth",
+    "text": "これまでで一番冒険的だったことは何ですか？",
+    "sortOrder": 73
+  },
+  {
+    "category": "喜び・楽しさ・明るい側面",
+    "source": "storyworth",
+    "text": "長年にわたって愛してきた趣味は何ですか？",
+    "sortOrder": 74
+  },
+  {
+    "category": "喜び・楽しさ・明るい側面",
+    "source": "vault",
+    "text": "これまでで一番おいしかった食事は何で、誰と一緒でしたか？",
+    "sortOrder": 75
+  },
+  {
+    "category": "喜び・楽しさ・明るい側面",
+    "source": "vault",
+    "text": "これまでで最も冒険的だったことは何ですか？",
+    "sortOrder": 76
+  },
+  {
+    "category": "喜び・楽しさ・明るい側面",
+    "source": "vault",
+    "text": "どんな時でも必ず笑ってしまうものは何ですか？",
+    "sortOrder": 77
+  },
+  {
+    "category": "喜び・楽しさ・明るい側面",
+    "source": "vault",
+    "text": "訪れた場所で、決して忘れられない所はどこですか？",
+    "sortOrder": 78
+  },
+  {
+    "category": "喜び・楽しさ・明るい側面",
+    "source": "vault",
+    "text": "ほとんどの人が知らない、あなたの才能や趣味は何ですか？",
+    "sortOrder": 79
+  },
+  {
+    "category": "知恵・振り返り・遺産",
+    "source": "storyworth",
+    "text": "若い頃の自分にどんなアドバイスをしますか？",
+    "sortOrder": 80
+  },
+  {
+    "category": "知恵・振り返り・遺産",
+    "source": "storyworth",
+    "text": "何に最も感謝していますか？",
+    "sortOrder": 81
+  },
+  {
+    "category": "知恵・振り返り・遺産",
+    "source": "storyworth",
+    "text": "孫たちに、あなたについて何を覚えていてほしいですか？",
+    "sortOrder": 82
+  },
+  {
+    "category": "知恵・振り返り・遺産",
+    "source": "storyworth",
+    "text": "人生が教えてくれた最も大切な教訓は何ですか？",
+    "sortOrder": 83
+  },
+  {
+    "category": "知恵・振り返り・遺産",
+    "source": "vault",
+    "text": "20歳の頃に知っておきたかったと思う、今知っていることは何ですか？",
+    "sortOrder": 84
+  },
+  {
+    "category": "知恵・振り返り・遺産",
+    "source": "vault",
+    "text": "人生を振り返って、最も感謝していることは何ですか？",
+    "sortOrder": 85
+  },
+  {
+    "category": "知恵・振り返り・遺産",
+    "source": "vault",
+    "text": "人々があなたについて誤解していると思うことは何ですか？",
+    "sortOrder": 86
+  },
+  {
+    "category": "知恵・振り返り・遺産",
+    "source": "vault",
+    "text": "あなたの人生のどの瞬間が、決して忘れられないでほしいと願いますか？",
+    "sortOrder": 87
+  },
+  {
+    "category": "知恵・振り返り・遺産",
+    "source": "vault",
+    "text": "家族の未来の世代に、あなたについて知っておいてほしいことは何ですか？",
+    "sortOrder": 88
+  },
+  {
+    "category": "知恵・振り返り・遺産",
+    "source": "vault",
+    "text": "愛する人たちに一つだけメッセージを残せるとしたら、何を伝えますか？",
+    "sortOrder": 89
+  }
+]
