@@ -1,0 +1,129 @@
+:root {
+  --ink: #2b2620;
+  --paper: #faf7f2;
+  --accent: #b0653a;
+  --muted: #8c8478;
+  --line: #e6dfd4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+  line-height: 1.8;
+}
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.site-header nav a {
+  color: var(--accent);
+  text-decoration: none;
+  margin-left: 16px;
+}
+
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+a {
+  color: var(--accent);
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin: 16px 0;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 12px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  margin-left: 8px;
+}
+
+.badge.answered {
+  color: #2e7d4f;
+  border-color: #2e7d4f;
+}
+
+form.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+input[type="text"],
+textarea {
+  font: inherit;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+}
+
+textarea {
+  min-height: 140px;
+}
+
+button {
+  font: inherit;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.answer-media img {
+  max-width: 100%;
+  border-radius: 6px;
+}
+
+.link-code {
+  font-size: 24px;
+  letter-spacing: 6px;
+  font-weight: 700;
+}
