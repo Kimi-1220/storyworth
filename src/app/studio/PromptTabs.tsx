@@ -102,7 +102,7 @@ export default function PromptTabs({
             <>
               <SectionEditor promptId={promptId} body={section.body} />
               <p className="muted">
-                あなたの言葉から起こした文章です。直したいところは、いつでも書き直せます。
+                縦書きのページです。横にスワイプすると読み進められます。あなたの言葉から起こした文章なので、直したいところはいつでも書き直せます。
                 {section.edited && " （編集済み）"}
               </p>
             </>

@@ -440,11 +440,14 @@ a.cta {
 }
 
 /* 章プレビューの本文＝「読む所」。冒頭の一節を縦組みで覗かせる。
-   高さで切り取り、横スクロールは出さない（タップで本ページへ）。 */
+   縦組みの block は width を固定しないと内容ぶん横に広がってはみ出すため、
+   width:100% で物理幅を親に固定し、高さで切り取る（横スクロールは出さない）。 */
 .section-body {
   display: block;
   writing-mode: vertical-rl;
   text-orientation: mixed;
+  width: 100%;
+  max-width: 100%;
   height: 8.5em;
   line-height: 1.9;
   letter-spacing: 0.04em;
@@ -463,30 +466,56 @@ a.cta {
 
 /* 確定した本文＝「読む所」。製本後の小説に合わせ縦組み（右→左）。
    入力・編集欄（.manuscript-input）は横書きのまま。 */
+.section-view {
+  position: relative;
+}
+
 .section-view .manuscript {
   writing-mode: vertical-rl;
   text-orientation: mixed;
-  height: min(62vh, 560px);
+  /* 縦組みは width を固定しないと内容ぶん横に伸びてはみ出す。
+     物理幅をページ幅に固定し、続きは横スワイプで読み進める。 */
+  width: 100%;
+  max-width: 100%;
+  height: min(58vh, 520px);
   white-space: pre-wrap;
   line-height: 2.05;
   letter-spacing: 0.05em;
   font-size: 20px;
   text-indent: 1em;
-  padding: 6px 2px 6px 0;
+  padding: 20px 22px;
+  /* 紙のページ＋右側に綴じ目（ノド）の陰影 */
+  background:
+    linear-gradient(270deg, rgba(43, 38, 32, 0.1), rgba(43, 38, 32, 0) 16px)
+      right / 100% 100% no-repeat,
+    #fdfbf6;
+  border: 1px solid var(--line);
+  border-radius: 4px 8px 8px 4px;
+  box-shadow:
+    inset 0 0 22px rgba(43, 38, 32, 0.05),
+    0 12px 26px rgba(43, 38, 32, 0.12);
   overflow-x: auto;
   overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
   scrollbar-width: thin;
 }
 
-/* 縦組みの読み面では、編集ボタンは本文の左（読み終わり側）下に置く */
-.section-view {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+/* 左へ続く「めくる」手がかり: 左端をふわっと暗くする */
+.section-view::after {
+  content: "";
+  position: absolute;
+  left: 1px;
+  top: 1px;
+  bottom: 1px;
+  width: 34px;
+  border-radius: 4px 0 0 4px;
+  background: linear-gradient(90deg, rgba(43, 38, 32, 0.08), rgba(43, 38, 32, 0));
+  pointer-events: none;
 }
 
 .section-view .edit-btn {
-  margin-top: 14px;
+  margin-top: 16px;
 }
 
 .edit-btn {
