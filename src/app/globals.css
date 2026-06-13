@@ -572,12 +572,36 @@ a.cta {
   border-color: var(--accent);
 }
 
-/* 取材タブ: チャット風だが原稿の書き味は維持 */
+/* ===== 取材タブ＝完全なチャットUI ===== */
+/* 履歴は内側でスクロールし、入力欄は常に下に見える。
+   高さは画面いっぱい近くを使う（上部の戻る/タブのぶんを差し引く）。 */
+.interview {
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - 210px);
+  min-height: 380px;
+}
+
+.chat-log {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 4px 2px 12px;
+}
+
+.chat-day {
+  text-align: center;
+  letter-spacing: 3px;
+  margin: 4px 0 14px;
+}
+
 .interview .bubble {
-  max-width: 88%;
-  padding: 14px 18px;
+  max-width: 86%;
+  width: fit-content;
+  padding: 13px 17px;
   margin: 12px 0;
-  border-radius: 16px;
+  border-radius: 18px;
   line-height: 1.9;
   font-size: 19px;
   white-space: pre-wrap;
@@ -586,7 +610,7 @@ a.cta {
 .interview .bubble.ask {
   background: #fff;
   border: 1px solid var(--line);
-  border-top-left-radius: 4px;
+  border-bottom-left-radius: 5px;
 }
 
 .interview .bubble.ask.warm {
@@ -597,17 +621,158 @@ a.cta {
 .interview .bubble.me {
   background: #efe7da;
   margin-left: auto;
-  border-top-right-radius: 4px;
+  border-bottom-right-radius: 5px;
 }
 
 .interview .bubble.me audio {
-  width: 100%;
+  width: 220px;
+  max-width: 60vw;
 }
 
-.interview-input {
-  margin-top: 24px;
-  border-top: 1px dashed var(--line);
-  padding-top: 16px;
+.interview .bubble.me.image {
+  padding: 5px;
+}
+
+.interview .bubble.me.image img {
+  display: block;
+  width: 200px;
+  max-width: 60vw;
+  border-radius: 14px;
+}
+
+.interview .bubble.me.pending {
+  opacity: 0.65;
+}
+
+/* 送信後の進捗ラベル＋タイピングのドット */
+.interview .bubble.typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 17px;
+}
+
+.dots {
+  display: inline-flex;
+  gap: 5px;
+}
+
+.dots i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.35;
+  animation: typing-blink 1.2s infinite ease-in-out;
+}
+
+.dots i:nth-child(2) {
+  animation-delay: 0.18s;
+}
+
+.dots i:nth-child(3) {
+  animation-delay: 0.36s;
+}
+
+@keyframes typing-blink {
+  0%,
+  70%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  35% {
+    opacity: 0.95;
+    transform: translateY(-3px);
+  }
+}
+
+/* 下に据え置く入力欄。コンテナ余白(24px)を打ち消して端まで広げる。 */
+.composer-dock {
+  flex: 0 0 auto;
+  margin: 0 -24px;
+  padding: 12px 16px calc(10px + env(safe-area-inset-bottom));
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+}
+
+.composer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 最初からマルチライン前提の高さ。 */
+.chat-input {
+  width: 100%;
+  min-height: 84px;
+  max-height: 40vh;
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 18px;
+  line-height: 1.7;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fffdf9;
+  resize: vertical;
+}
+
+.composer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.composer-tools {
+  display: flex;
+  gap: 8px;
+}
+
+.tool-btn {
+  position: relative;
+  background: #fff;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 9px 16px;
+  font-size: 16px;
+}
+
+.tool-btn.photo-chip {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.tool-btn.photo-chip input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.send-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 11px 22px;
+  font-size: 17px;
+}
+
+.send-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.photo-attached {
+  margin: 0;
+}
+
+.composer .recorder {
+  margin: 0;
 }
 
 /* 本タブ: 一枚の紙のページに見せる */

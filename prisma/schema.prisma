@@ -96,8 +96,23 @@ model Prompt {
   createdAt     DateTime    @default(now())
   answers       Answer[]
   section       Section?
+  interviewMessages InterviewMessage[]
 
   @@unique([storytellerId, questionId])
+}
+
+// 取材（チャット）のAI側の発言ログ。リアクション・深掘りを1ターンずつ残し、
+// 完全な会話履歴として表示できるようにする。
+// 語り手の発言は Answer 側に残るので、表示時は createdAt で両者を時系列マージする。
+model InterviewMessage {
+  id        String   @id @default(cuid())
+  prompt    Prompt   @relation(fields: [promptId], references: [id])
+  promptId  String
+  role      String // "reaction" | "followups"
+  text      String
+  createdAt DateTime @default(now())
+
+  @@index([promptId])
 }
 
 // 回答。1つの出題に複数回答可（テキスト + 写真 + 音声の組み合わせ）
