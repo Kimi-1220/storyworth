@@ -348,42 +348,46 @@ a.cta {
   opacity: 0.5;
 }
 
-/* 一冊の本を、横にめくって読むページャに。右→左へめくる（和書の向き）。 */
+/* 一冊の本を、横にめくって読むページャに。右→左へめくる（和書の向き）。
+   1ページずつ全画面でスナップする。 */
 .book {
   position: relative;
-  margin: 0 -8px;
+  margin: 0 -24px; /* コンテナ余白を打ち消して全画面幅に */
 }
 
 .book-pager {
   display: flex;
   direction: rtl; /* 最初のページを右に置き、左へめくる */
-  gap: 16px;
+  gap: 14px;
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
-  padding: 6px 8px 14px;
-  scrollbar-width: thin;
+  padding: 6px 0 14px;
+  scrollbar-width: none;
 }
 
-/* 1ページ＝1枚の紙。質問・章タイトル・本文すべて縦組み。 */
+.book-pager::-webkit-scrollbar {
+  display: none;
+}
+
+/* 1ページ＝1枚の紙（全画面）。質問・章タイトル・本文すべて縦組み。 */
 .leaf {
   direction: ltr;
-  flex: 0 0 86%;
-  height: min(66vh, 580px);
+  flex: 0 0 100%;
+  height: min(72vh, 640px);
   scroll-snap-align: center;
+  scroll-snap-stop: always; /* 1スワイプ＝1ページ */
   position: relative;
   background:
-    linear-gradient(270deg, rgba(43, 38, 32, 0.09), rgba(43, 38, 32, 0) 16px)
+    linear-gradient(270deg, rgba(43, 38, 32, 0.1), rgba(43, 38, 32, 0) 18px)
       right / 100% 100% no-repeat,
     #fdfbf6;
-  border: 1px solid var(--line);
-  border-radius: 4px 10px 10px 4px;
-  box-shadow:
-    inset 0 0 22px rgba(43, 38, 32, 0.04),
-    0 12px 26px rgba(43, 38, 32, 0.14);
-  padding: 26px 24px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  box-shadow: inset 0 0 26px rgba(43, 38, 32, 0.04);
+  padding: 28px 26px;
   overflow: hidden;
 }
 
@@ -462,6 +466,18 @@ a.cta {
   background: rgba(253, 251, 246, 0.85);
   padding: 2px 7px;
   border-radius: 6px;
+}
+
+/* ページ番号（柱）。本文が複数ページに渡るときだけ下中央に。 */
+.leaf-folio {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--muted);
 }
 
 .book-hint {
