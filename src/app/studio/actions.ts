@@ -91,6 +91,42 @@ export async function submitStudioAnswer(formData: FormData) {
     },
   });
 
+  // AIの返答を1ターンずつ履歴として残す（語り手の発言は Answer 側に残る）。
+  // 表示は createdAt で時系列マージするので、確実に語り手の回答より後になるよう
+  // リアクション→深掘りの順に明示的な時刻を振る。
+  const now = Date.now();
+  const aiMessages: {
+    promptId: string;
+    role: string;
+    text: string;
+    createdAt: Date;
+  }[] = [];
+  if (reaction) {
+    aiMessages.push({
+      promptId,
+      role: "reaction",
+      text: reaction,
+      createdAt: new Date(now),
+    });
+  }
+  if (followups.length) {
+    aiMessages.push({
+      promptId,
+      role: "followups",
+      text: followups.join("\n"),
+      createdAt: new Date(now + 1000),
+    });
+  }
+  if (aiMessages.length) {
+    // テーブル未適用（db push 前）でも回答保存は止めない。表示側は
+    // prompt.reaction/followups からの後方互換フォールバックで補える。
+    try {
+      await prisma.interviewMessage.createMany({ data: aiMessages });
+    } catch (err) {
+      console.error("interviewMessage.createMany skipped:", err);
+    }
+  }
+
   // この質問のセクションを生成/追記（既存があれば言い回しを保って追記）
   if (answeredText) {
     await regenerateSection(promptId, answeredText);

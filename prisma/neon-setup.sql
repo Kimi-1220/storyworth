@@ -93,6 +93,16 @@ CREATE TABLE IF NOT EXISTS "Answer" (
     CONSTRAINT "Answer_pkey" PRIMARY KEY ("id")
 );
 
+-- 取材チャットのAI側ログ（リアクション・深掘りを1ターンずつ保存）
+CREATE TABLE IF NOT EXISTS "InterviewMessage" (
+    "id" TEXT NOT NULL,
+    "promptId" TEXT NOT NULL,
+    "role" TEXT NOT NULL,
+    "text" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "InterviewMessage_pkey" PRIMARY KEY ("id")
+);
+
 -- ===== インデックス =====
 
 CREATE UNIQUE INDEX IF NOT EXISTS "Storyteller_lineUserId_key" ON "Storyteller"("lineUserId");
@@ -101,6 +111,7 @@ CREATE INDEX IF NOT EXISTS "MagicLink_storytellerId_idx" ON "MagicLink"("storyte
 CREATE UNIQUE INDEX IF NOT EXISTS "Chapter_storytellerId_category_key" ON "Chapter"("storytellerId", "category");
 CREATE UNIQUE INDEX IF NOT EXISTS "Section_promptId_key" ON "Section"("promptId");
 CREATE INDEX IF NOT EXISTS "Section_storytellerId_category_idx" ON "Section"("storytellerId", "category");
+CREATE INDEX IF NOT EXISTS "InterviewMessage_promptId_idx" ON "InterviewMessage"("promptId");
 CREATE UNIQUE INDEX IF NOT EXISTS "Question_text_key" ON "Question"("text");
 CREATE UNIQUE INDEX IF NOT EXISTS "Prompt_storytellerId_questionId_key" ON "Prompt"("storytellerId", "questionId");
 
@@ -132,6 +143,10 @@ EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
   ALTER TABLE "Answer" ADD CONSTRAINT "Answer_promptId_fkey" FOREIGN KEY ("promptId") REFERENCES "Prompt"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "InterviewMessage" ADD CONSTRAINT "InterviewMessage_promptId_fkey" FOREIGN KEY ("promptId") REFERENCES "Prompt"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 
