@@ -58,18 +58,24 @@ export async function createMagicLink(
   return `${base}/studio/enter?token=${token}`;
 }
 
-// マジックリンクを消費（1回限り）。成功なら語り手情報を返す
+// マジックリンクを使う。成功なら語り手情報を返す。
+// 注: 厳密な「1回限り」にすると、LINE等がトークのリンクプレビュー用に
+// URLを先読み（プリフェッチ）した時点でトークンが消費され、本人がタップ
+// する頃には「使用済み」になってしまう。そのため有効期限内は再利用可とし、
+// 短命トークン（14日）であることでセキュリティを担保する。
+// usedAt は初回アクセス時刻の記録のみに使う。
 export async function consumeMagicToken(
   token: string,
 ): Promise<{ storytellerId: string; promptId: string | null } | null> {
   const link = await prisma.magicLink.findUnique({ where: { token } });
   if (!link) return null;
-  if (link.usedAt) return null;
   if (link.expiresAt < new Date()) return null;
-  await prisma.magicLink.update({
-    where: { token },
-    data: { usedAt: new Date() },
-  });
+  if (!link.usedAt) {
+    await prisma.magicLink.update({
+      where: { token },
+      data: { usedAt: new Date() },
+    });
+  }
   return { storytellerId: link.storytellerId, promptId: link.promptId };
 }
 
