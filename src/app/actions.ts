@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { mediaTypeOf, saveMedia } from "@/lib/storage";
 import { sendNextQuestion } from "@/lib/prompts";
+import { createMagicLink } from "@/lib/auth";
 
 async function uniqueLinkCode(): Promise<string> {
   for (;;) {
@@ -33,6 +34,14 @@ export async function sendNextQuestionAction(formData: FormData) {
   if (!storytellerId) return;
   await sendNextQuestion(storytellerId);
   revalidatePath(`/storytellers/${storytellerId}`);
+}
+
+// 動作確認用: その語り手として執筆スタジオを開く（マジックリンクを発行して飛ぶ）
+export async function openStudioAction(formData: FormData) {
+  const storytellerId = String(formData.get("storytellerId") ?? "");
+  if (!storytellerId) return;
+  const url = await createMagicLink(storytellerId);
+  redirect(url);
 }
 
 // Webの回答フォーム: テキスト + 任意の画像/音声ファイル

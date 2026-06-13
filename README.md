@@ -29,7 +29,10 @@ DBは [Neon](https://neon.tech) の無料枠が手軽（ローカル用とVercel
 3. **環境変数を設定**（Project Settings → Environment Variables）:
    - `DATABASE_URL` … NeonのURL
    - `CRON_SECRET` … 長いランダム文字列（週次cronの認証。Vercelがcron実行時に自動で付与する）
-   - `APP_BASE_URL` … `https://<プロジェクト名>.vercel.app`
+   - `SESSION_SECRET` … 長いランダム文字列（スタジオのセッションCookie署名。未設定なら`CRON_SECRET`を流用）
+   - `APP_BASE_URL` … `https://<プロジェクト名>.vercel.app`（マジックリンクの生成に使う）
+   - `ANTHROPIC_API_KEY` … Claude（リアクション・深掘り・章の自動執筆）。未設定でも動く（定型文にフォールバック）
+   - `OPENAI_API_KEY` … 音声の文字起こし（Whisper）。未設定なら音声は保存のみ
    - `LINE_CHANNEL_ACCESS_TOKEN` / `LINE_CHANNEL_SECRET` … LINE連携を使う場合
 4. **Blobストアを作成**（写真・音声の保存先）: Vercelダッシュボード → Storage → Blob → Create。
    `BLOB_READ_WRITE_TOKEN` がプロジェクトに自動追加される
@@ -38,6 +41,8 @@ DBは [Neon](https://neon.tech) の無料枠が手軽（ローカル用とVercel
    DATABASE_URL="<NeonのURL>" npm run db:push
    DATABASE_URL="<NeonのURL>" npm run db:seed
    ```
+   （手元にCLIを置かない場合は、Neon SQL Editor に `prisma/neon-setup.sql` を貼って実行。
+   冪等なので、既存DBに執筆スタジオ用のテーブル／列を追加する用途でもそのまま流せる）
 6. デプロイ完了後、`https://<プロジェクト名>.vercel.app/dashboard` から試せる
 
 週次の質問送信は `vercel.json` のcron（**毎週日曜 9:00 JST**）で自動実行される。
@@ -47,8 +52,16 @@ DBは [Neon](https://neon.tech) の無料枠が手軽（ローカル用とVercel
 - ダッシュボードで語り手を登録 → 6桁の連携コード発行
 - LINE友だち追加 + コード送信で語り手を紐付け（webhook: `/api/line/webhook`）
 - 質問の出題: 手動ボタン or 週次cron（`GET /api/cron/weekly`、`Authorization: Bearer $CRON_SECRET`）
-- LINEでの回答受信（テキスト・写真・音声）と、Web回答フォーム
-- 回答の閲覧（家族向け）
+- **執筆スタジオ**（肝①の実体・`/studio`）:
+  - マジックリンクでログイン不要の着地（通知のリンクをタップ → 本人のスタジオが開く）
+  - 「書く / 話す」が対等な取材フォーム（録音→文字起こし、写真添付）
+  - 著者気分のUI: 表紙モック・進捗・育っていく章のプレビュー
+  - 回答後にClaudeがリアクション＆やさしい深掘りを生成
+- **章の自動執筆**（肝②）: 回答が溜まるたびにClaudeがカテゴリ単位で章の下書きを更新
+- LINEでの回答受信（テキスト・写真・音声）＋ Claudeのリアクション＋スタジオへの橋渡し
+- 回答の閲覧（家族向けダッシュボード）
+
+スタジオの動作確認は、ダッシュボードの語り手ページ →「この語り手として執筆スタジオを開く」から。
 
 ### LINE側の設定
 

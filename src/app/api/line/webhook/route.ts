@@ -9,6 +9,9 @@ import {
 } from "@/lib/line";
 import { latestOpenPrompt } from "@/lib/prompts";
 import { saveMedia } from "@/lib/storage";
+import { createMagicLink } from "@/lib/auth";
+import { generateReaction } from "@/lib/llm";
+import { regenerateChapter } from "@/lib/chapters";
 
 export async function POST(req: NextRequest) {
   if (!lineConfigured()) {
@@ -95,7 +98,9 @@ async function handleEvent(event: webhook.Event) {
     return;
   }
 
+  let answeredText = "";
   if (message.type === "text") {
+    answeredText = message.text;
     await prisma.answer.create({
       data: {
         promptId: prompt.id,
@@ -125,10 +130,21 @@ async function handleEvent(event: webhook.Event) {
     data: { status: "answered" },
   });
 
-  // TODO(肝①): 定型文ではなく、回答内容に応じたリアクション・深掘り質問をLLMで生成する
-  // → docs/line-experience.md
+  // 肝①: 回答内容に即したリアクションをLLMで生成（失敗時は温かい定型文）。
+  // 深掘りそのものはスタジオの仕事なので、LINEは火種と反応に徹し、
+  // 「もっと話したくなったら」スタジオへ橋渡しする。→ docs/line-experience.md
+  const reaction =
+    (answeredText ? await generateReaction(prompt.question.text, answeredText) : null) ??
+    "すてきなお話をありがとうございます。本に書き加えておきますね。";
+
+  // テキスト回答なら章の下書きも更新（本が育つ）
+  if (answeredText) {
+    await regenerateChapter(storyteller.id, prompt.question.category);
+  }
+
+  const studioUrl = await createMagicLink(storyteller.id, prompt.id);
   await replyText(
     replyToken,
-    `すてきなお話をありがとうございます。「${prompt.question.text}」への回答として、本に書き加えておきますね。\nあとから思い出したことがあれば、いつでもこのまま送ってください。`,
+    `${reaction}\n\nもっと話したくなったら、こちらで続きを書いたり話したりできますよ。\n▼ あなたの自伝に書き加える\n${studioUrl}`,
   );
 }

@@ -1,7 +1,11 @@
 import { prisma } from "@/lib/db";
 import { lineConfigured, pushText } from "@/lib/line";
+import { createMagicLink } from "@/lib/auth";
+import { novelizeQuestion } from "@/lib/llm";
 
 // 次の未出題の質問を選んで Prompt を作り、LINEに送る（連携済みの場合）。
+// 通知にはマジックリンク（タップでログイン不要のスタジオが開く）を添える。
+// → docs/line-experience.md「2. スタジオへの橋渡し」/ docs/writing-studio.md
 // 戻り値: 作成した Prompt（出題できる質問が残っていなければ null）
 export async function sendNextQuestion(storytellerId: string) {
   const storyteller = await prisma.storyteller.findUniqueOrThrow({
@@ -19,15 +23,23 @@ export async function sendNextQuestion(storytellerId: string) {
   });
   if (!question) return null;
 
+  // 質問文を小説的な問いかけに（失敗時は元の質問のまま）
+  const novelText = await novelizeQuestion(question.text, question.category);
+
   const prompt = await prisma.prompt.create({
-    data: { storytellerId, questionId: question.id, sentAt: new Date() },
+    data: {
+      storytellerId,
+      questionId: question.id,
+      novelText,
+      sentAt: new Date(),
+    },
   });
 
   if (storyteller.lineUserId && lineConfigured()) {
-    const url = `${process.env.APP_BASE_URL ?? ""}/storytellers/${storytellerId}/prompts/${prompt.id}`;
+    const studioUrl = await createMagicLink(storytellerId, prompt.id);
     await pushText(
       storyteller.lineUserId,
-      `${storyteller.name}さん、今週の質問です。\n\n「${question.text}」\n\n文章でも、写真でも、音声メッセージでも大丈夫です。このトークにそのまま返信してください。\n\nWebで書く場合はこちら:\n${url}`,
+      `${storyteller.name}さん、今週の質問です。\n\n「${novelText ?? question.text}」\n\nこちらから、書いても話しても答えられます。\nタップするだけで、あなたの執筆スタジオが開きます。\n\n▼ あなたの自伝に書き加える\n${studioUrl}`,
     );
   }
 
