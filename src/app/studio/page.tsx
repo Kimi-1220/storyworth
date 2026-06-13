@@ -127,7 +127,8 @@ export default async function StudioHome({
                   className="section-link"
                   href={`/studio/prompts/${s.promptId}`}
                 >
-                  <span className="section-body">{s.body.slice(0, 160)}…</span>
+                  <span className="section-q">{s.prompt.question.text}</span>
+                  <span className="section-body">{s.body.slice(0, 140)}…</span>
                   <span className="section-edit-hint">
                     ✎ {s.edited ? "編集済み" : "このページを直す"}
                   </span>
@@ -138,22 +139,6 @@ export default async function StudioHome({
         </section>
       )}
 
-      {prompts.some((p) => p.status === "answered") && (
-        <section className="past-answers">
-          <h2>これまでの取材</h2>
-          {prompts
-            .filter((p) => p.status === "answered")
-            .map((p) => (
-              <Link
-                key={p.id}
-                className="past-answer"
-                href={`/studio/prompts/${p.id}`}
-              >
-                {p.novelText ?? p.question.text}
-              </Link>
-            ))}
-        </section>
-      )}
     </div>
   );
 }

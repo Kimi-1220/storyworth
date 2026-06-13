@@ -416,3 +416,79 @@ a.cta {
   font-size: 17px;
   text-indent: 0;
 }
+
+/* ===== 取材 / 本 タブ ===== */
+.studio-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0 20px;
+}
+
+.studio-tabs .stab {
+  flex: 1;
+  background: #fff;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 12px;
+  font-size: 17px;
+  align-self: stretch;
+}
+
+.studio-tabs .stab.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* 取材タブ: チャット風だが原稿の書き味は維持 */
+.interview .bubble {
+  max-width: 88%;
+  padding: 14px 18px;
+  margin: 12px 0;
+  border-radius: 16px;
+  line-height: 1.9;
+  font-size: 19px;
+  white-space: pre-wrap;
+}
+
+.interview .bubble.ask {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-top-left-radius: 4px;
+}
+
+.interview .bubble.ask.warm {
+  background: #f6f1e8;
+  border-color: #e7dcc8;
+}
+
+.interview .bubble.me {
+  background: #efe7da;
+  margin-left: auto;
+  border-top-right-radius: 4px;
+}
+
+.interview .bubble.me audio {
+  width: 100%;
+}
+
+.interview-input {
+  margin-top: 24px;
+  border-top: 1px dashed var(--line);
+  padding-top: 16px;
+}
+
+/* 本タブ: シンプルな質問を見出しに */
+.book-q {
+  font-size: 22px;
+  margin: 4px 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.section-q {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
