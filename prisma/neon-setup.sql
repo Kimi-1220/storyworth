@@ -1,42 +1,71 @@
--- CreateSchema
+-- Neon SQL Editor 用セットアップ（スキーマ + 質問89問）。
+-- 冪等: 新規セットアップにも、既存DBへの執筆スタジオ機能の追加にも、そのまま流せる。
+
 CREATE SCHEMA IF NOT EXISTS "public";
 
--- CreateTable
-CREATE TABLE "Storyteller" (
+-- ===== テーブル =====
+
+CREATE TABLE IF NOT EXISTS "Storyteller" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "lineUserId" TEXT,
     "linkCode" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
     CONSTRAINT "Storyteller_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "Question" (
+-- 執筆スタジオへのマジックリンク（1回限り・短命トークン）
+CREATE TABLE IF NOT EXISTS "MagicLink" (
+    "token" TEXT NOT NULL,
+    "storytellerId" TEXT NOT NULL,
+    "promptId" TEXT,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "usedAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "MagicLink_pkey" PRIMARY KEY ("token")
+);
+
+-- 育っていく章（回答が溜まるたびにLLMで下書きを生成）
+CREATE TABLE IF NOT EXISTS "Chapter" (
+    "id" TEXT NOT NULL,
+    "storytellerId" TEXT NOT NULL,
+    "category" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "body" TEXT NOT NULL,
+    "sortOrder" INTEGER NOT NULL DEFAULT 0,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Chapter_pkey" PRIMARY KEY ("id")
+);
+
+CREATE TABLE IF NOT EXISTS "Question" (
     "id" TEXT NOT NULL,
     "category" TEXT NOT NULL,
     "source" TEXT NOT NULL,
     "text" TEXT NOT NULL,
     "sortOrder" INTEGER NOT NULL,
-
     CONSTRAINT "Question_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "Prompt" (
+CREATE TABLE IF NOT EXISTS "Prompt" (
     "id" TEXT NOT NULL,
     "storytellerId" TEXT NOT NULL,
     "questionId" TEXT NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'open',
+    "novelText" TEXT,
+    "reaction" TEXT,
+    "followups" TEXT,
     "sentAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
     CONSTRAINT "Prompt_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "Answer" (
+-- 既存DBにスタジオ用の列を追加（新規CREATE時は no-op）
+ALTER TABLE "Prompt" ADD COLUMN IF NOT EXISTS "novelText" TEXT;
+ALTER TABLE "Prompt" ADD COLUMN IF NOT EXISTS "reaction" TEXT;
+ALTER TABLE "Prompt" ADD COLUMN IF NOT EXISTS "followups" TEXT;
+
+CREATE TABLE IF NOT EXISTS "Answer" (
     "id" TEXT NOT NULL,
     "promptId" TEXT NOT NULL,
     "type" TEXT NOT NULL,
@@ -44,30 +73,39 @@ CREATE TABLE "Answer" (
     "mediaPath" TEXT,
     "via" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
     CONSTRAINT "Answer_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
-CREATE UNIQUE INDEX "Storyteller_lineUserId_key" ON "Storyteller"("lineUserId");
+-- ===== インデックス =====
 
--- CreateIndex
-CREATE UNIQUE INDEX "Storyteller_linkCode_key" ON "Storyteller"("linkCode");
+CREATE UNIQUE INDEX IF NOT EXISTS "Storyteller_lineUserId_key" ON "Storyteller"("lineUserId");
+CREATE UNIQUE INDEX IF NOT EXISTS "Storyteller_linkCode_key" ON "Storyteller"("linkCode");
+CREATE INDEX IF NOT EXISTS "MagicLink_storytellerId_idx" ON "MagicLink"("storytellerId");
+CREATE UNIQUE INDEX IF NOT EXISTS "Chapter_storytellerId_category_key" ON "Chapter"("storytellerId", "category");
+CREATE UNIQUE INDEX IF NOT EXISTS "Question_text_key" ON "Question"("text");
+CREATE UNIQUE INDEX IF NOT EXISTS "Prompt_storytellerId_questionId_key" ON "Prompt"("storytellerId", "questionId");
 
--- CreateIndex
-CREATE UNIQUE INDEX "Question_text_key" ON "Question"("text");
+-- ===== 外部キー（重複作成を避けて冪等に） =====
 
--- CreateIndex
-CREATE UNIQUE INDEX "Prompt_storytellerId_questionId_key" ON "Prompt"("storytellerId", "questionId");
+DO $$ BEGIN
+  ALTER TABLE "MagicLink" ADD CONSTRAINT "MagicLink_storytellerId_fkey" FOREIGN KEY ("storytellerId") REFERENCES "Storyteller"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
--- AddForeignKey
-ALTER TABLE "Prompt" ADD CONSTRAINT "Prompt_storytellerId_fkey" FOREIGN KEY ("storytellerId") REFERENCES "Storyteller"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+DO $$ BEGIN
+  ALTER TABLE "Chapter" ADD CONSTRAINT "Chapter_storytellerId_fkey" FOREIGN KEY ("storytellerId") REFERENCES "Storyteller"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
--- AddForeignKey
-ALTER TABLE "Prompt" ADD CONSTRAINT "Prompt_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "Question"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+DO $$ BEGIN
+  ALTER TABLE "Prompt" ADD CONSTRAINT "Prompt_storytellerId_fkey" FOREIGN KEY ("storytellerId") REFERENCES "Storyteller"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
--- AddForeignKey
-ALTER TABLE "Answer" ADD CONSTRAINT "Answer_promptId_fkey" FOREIGN KEY ("promptId") REFERENCES "Prompt"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+DO $$ BEGIN
+  ALTER TABLE "Prompt" ADD CONSTRAINT "Prompt_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "Question"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "Answer" ADD CONSTRAINT "Answer_promptId_fkey" FOREIGN KEY ("promptId") REFERENCES "Prompt"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 
 -- Seed: 質問マスタ89問（data/questions.json 由来）

@@ -127,3 +127,230 @@ button:hover {
   letter-spacing: 6px;
   font-weight: 700;
 }
+
+/* ===== 執筆スタジオ（語り手向け・大きな文字／最小限のボタン） ===== */
+
+.studio {
+  font-size: 19px;
+  line-height: 2;
+}
+
+.studio h1,
+.studio h2,
+.studio h3 {
+  font-weight: 600;
+}
+
+.studio-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 24px;
+  margin: 20px 0;
+}
+
+/* 表紙モック: 初日から本人を「著者」に */
+.book-cover {
+  background: linear-gradient(160deg, #3a342b, #2b2620);
+  color: #f3ece0;
+  border-radius: 10px;
+  padding: 40px 28px;
+  text-align: center;
+  margin: 8px 0 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+.cover-kicker {
+  letter-spacing: 8px;
+  font-size: 14px;
+  color: #c9a989;
+  margin: 0 0 12px;
+}
+
+.cover-title {
+  font-size: 30px;
+  margin: 0 0 16px;
+  color: #fff;
+}
+
+.cover-author {
+  color: #d8c8b3;
+  margin: 0;
+}
+
+.progress {
+  margin: 16px 0 24px;
+}
+
+.progress strong {
+  color: var(--accent);
+  font-size: 22px;
+}
+
+.current-question .question-text {
+  font-size: 24px;
+  line-height: 1.9;
+  margin: 8px 0 20px;
+}
+
+.cta,
+a.cta {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  padding: 14px 22px;
+  border-radius: 8px;
+  font-size: 19px;
+}
+
+/* 書く / 話す の対等な2入口 */
+.mode-tabs {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.mode-tabs .tab {
+  flex: 1;
+  background: #fff;
+  color: var(--ink);
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  padding: 18px 12px;
+  font-size: 18px;
+  align-self: stretch;
+}
+
+.mode-tabs .tab.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.switch-hint {
+  margin: 8px 0 0;
+}
+
+.manuscript-input {
+  width: 100%;
+  min-height: 220px;
+  margin-top: 16px;
+  padding: 18px;
+  font-family: inherit;
+  font-size: 20px;
+  line-height: 2;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fffdf9;
+}
+
+.recorder {
+  margin-top: 16px;
+}
+
+.record-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 18px 28px;
+  font-size: 19px;
+}
+
+.record-btn.recording {
+  background: #b33;
+}
+
+.playback {
+  margin-top: 16px;
+}
+
+.playback audio {
+  width: 100%;
+}
+
+.photo-field {
+  display: block;
+  margin-top: 18px;
+}
+
+.submit-btn {
+  margin-top: 20px;
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 18px;
+  font-size: 20px;
+  align-self: stretch;
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.form-error {
+  color: #b33;
+  margin-top: 12px;
+}
+
+/* リアクション（聞き上手な反応） */
+.reaction {
+  background: #f6f1e8;
+  border-left: 4px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  padding: 16px 20px;
+  margin: 20px 0;
+  font-size: 20px;
+}
+
+.followups ul {
+  margin: 8px 0 12px;
+  padding-left: 1.2em;
+}
+
+.followups li {
+  margin: 8px 0;
+  font-size: 20px;
+}
+
+/* 原稿に見えるUI */
+.your-words .manuscript {
+  font-size: 20px;
+  line-height: 2.1;
+  text-indent: 1em;
+  white-space: pre-wrap;
+}
+
+.photos img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
+/* 育っていく章 */
+.chapters .chapter,
+.past-answers .past-answer {
+  background: #fffdf9;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin: 16px 0;
+}
+
+.chapter h3 {
+  margin-top: 0;
+}
+
+.chapter-body {
+  white-space: pre-wrap;
+  line-height: 2.1;
+}
+
+.past-answers .past-answer {
+  display: block;
+  text-decoration: none;
+  color: var(--ink);
+}

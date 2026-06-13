@@ -9,12 +9,45 @@ datasource db {
 
 // 語り手（親・祖母など、質問に答える人）
 model Storyteller {
-  id         String   @id @default(cuid())
+  id         String      @id @default(cuid())
   name       String
-  lineUserId String?  @unique
-  linkCode   String   @unique // LINE連携用の6桁コード
-  createdAt  DateTime @default(now())
+  lineUserId String?     @unique
+  linkCode   String      @unique // LINE連携用の6桁コード
+  createdAt  DateTime    @default(now())
   prompts    Prompt[]
+  magicLinks MagicLink[]
+  chapters   Chapter[]
+}
+
+// 執筆スタジオへのマジックリンク（1回限り・短命トークン）。
+// LINE等の通知に貼り、タップだけでログイン済みのスタジオが開く。
+// → docs/writing-studio.md「着地の設計」
+model MagicLink {
+  token         String      @id // URLセーフなランダムトークン
+  storyteller   Storyteller @relation(fields: [storytellerId], references: [id])
+  storytellerId String
+  promptId      String? // 開いた直後に見せたい出題（任意）
+  expiresAt     DateTime
+  usedAt        DateTime?
+  createdAt     DateTime    @default(now())
+
+  @@index([storytellerId])
+}
+
+// 育っていく章。回答が溜まるたびにLLMで下書きを生成し、スタジオで見せる。
+// → docs/novel.md / docs/writing-studio.md「章がリアルタイムで育つ」
+model Chapter {
+  id            String      @id @default(cuid())
+  storyteller   Storyteller @relation(fields: [storytellerId], references: [id])
+  storytellerId String
+  category      String // 質問カテゴリ＝章のテーマ
+  title         String
+  body          String // 生成された本文の下書き
+  sortOrder     Int         @default(0)
+  updatedAt     DateTime    @updatedAt
+  createdAt     DateTime    @default(now())
+
+  @@unique([storytellerId, category])
 }
 
 // 質問マスタ（data/questions.json から seed で投入）
@@ -35,6 +68,9 @@ model Prompt {
   question      Question    @relation(fields: [questionId], references: [id])
   questionId    String
   status        String      @default("open") // "open" | "answered" | "skipped"
+  novelText     String? // 小説的に書き換えた問いかけ（スタジオ表示用）
+  reaction      String? // 直近回答へのLLMリアクション
+  followups     String? // やさしい深掘り質問（改行区切り）
   sentAt        DateTime?
   createdAt     DateTime    @default(now())
   answers       Answer[]

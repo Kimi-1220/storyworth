@@ -12,6 +12,7 @@
     "questions:build": "node scripts/build-questions.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.69.0",
     "@line/bot-sdk": "^10.0.0",
     "@prisma/client": "^6.8.0",
     "@vercel/blob": "^2.4.0",

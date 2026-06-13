@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { sendNextQuestionAction } from "@/app/actions";
+import { openStudioAction, sendNextQuestionAction } from "@/app/actions";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +43,13 @@ export default async function StorytellerPage({
         </form>
         <p className="muted">
           通常は毎週自動で出題されます（cron）。ボタンで手動でも出題できます。
+        </p>
+        <form action={openStudioAction} className="stack">
+          <input type="hidden" name="storytellerId" value={storyteller.id} />
+          <button type="submit">この語り手として執筆スタジオを開く</button>
+        </form>
+        <p className="muted">
+          マジックリンクを発行して、語り手が見る「書く / 話す」スタジオを確認できます。
         </p>
       </div>
 
