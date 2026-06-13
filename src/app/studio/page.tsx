@@ -126,33 +126,32 @@ export default async function StudioHome({
       {chapterGroups.length > 0 && (
         <section className="chapters">
           <h2 className="chapters-title">育っていく、あなたの本</h2>
+          {/* 一冊の本を横にめくって読む（右→左／和書の向き）。
+              章扉ページ→質問ごとのページ、をページ送りで並べる。 */}
           <div className="book">
-            {chapterGroups.map((c, i) => (
-              <article className="chapter" key={c.category}>
-                <header className="chapter-head">
-                  <p className="chapter-num">第{kanjiNum(i + 1)}章</p>
-                  <h3 className="chapter-title">{c.title}</h3>
-                  <span className="chapter-orn">❦</span>
-                </header>
-                <div className="chapter-pages">
-                  {c.sections.map((s) => (
-                    <Link
-                      key={s.id}
-                      className="section-link"
-                      href={`/studio/prompts/${s.promptId}`}
-                    >
-                      <span className="section-q">{s.prompt.question.text}</span>
-                      <span className="section-body">
-                        {s.body.slice(0, 140)}…
-                      </span>
-                      <span className="section-edit-hint">
-                        ✎ {s.edited ? "編集済み" : "このページを直す"}
-                      </span>
+            <div className="book-pager">
+              {chapterGroups.flatMap((c, i) => [
+                <div className="leaf chapter-leaf" key={`ch-${c.category}`}>
+                  <div className="leaf-inner">
+                    <p className="chapter-num">第{kanjiNum(i + 1)}章</p>
+                    <h3 className="chapter-title">{c.title}</h3>
+                    <span className="chapter-orn">❦</span>
+                  </div>
+                </div>,
+                ...c.sections.map((s) => (
+                  <article className="leaf section-leaf" key={s.id}>
+                    <div className="leaf-inner">
+                      <h4 className="leaf-q">{s.prompt.question.text}</h4>
+                      <p className="leaf-body">{s.body}</p>
+                    </div>
+                    <Link className="leaf-edit" href={`/studio/prompts/${s.promptId}`}>
+                      ✎ {s.edited ? "編集済み" : "直す"}
                     </Link>
-                  ))}
-                </div>
-              </article>
-            ))}
+                  </article>
+                )),
+              ])}
+            </div>
+            <p className="book-hint muted">← 横にめくって読む</p>
           </div>
         </section>
       )}

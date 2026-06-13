@@ -348,120 +348,125 @@ a.cta {
   opacity: 0.5;
 }
 
-/* 紙を綴じた一冊。右側に重なったページの小口を覗かせる。 */
+/* 一冊の本を、横にめくって読むページャに。右→左へめくる（和書の向き）。 */
 .book {
   position: relative;
+  margin: 0 -8px;
+}
+
+.book-pager {
+  display: flex;
+  direction: rtl; /* 最初のページを右に置き、左へめくる */
+  gap: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  padding: 6px 8px 14px;
+  scrollbar-width: thin;
+}
+
+/* 1ページ＝1枚の紙。質問・章タイトル・本文すべて縦組み。 */
+.leaf {
+  direction: ltr;
+  flex: 0 0 86%;
+  height: min(66vh, 580px);
+  scroll-snap-align: center;
+  position: relative;
   background:
-    linear-gradient(90deg, rgba(43, 38, 32, 0.06), rgba(43, 38, 32, 0) 10px),
+    linear-gradient(270deg, rgba(43, 38, 32, 0.09), rgba(43, 38, 32, 0) 16px)
+      right / 100% 100% no-repeat,
     #fdfbf6;
   border: 1px solid var(--line);
-  border-radius: 3px 8px 8px 3px;
-  padding: 8px 0;
+  border-radius: 4px 10px 10px 4px;
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.6) inset,
-    4px 5px 0 -1px #f4eee2,
-    7px 9px 0 -2px #ece5d6,
-    0 16px 34px rgba(43, 38, 32, 0.16);
-}
-
-.chapters .chapter {
-  background: transparent;
-  border: none;
-  border-radius: 0;
-  margin: 0;
-  padding: 32px 30px 28px;
-}
-
-.chapters .chapter + .chapter {
-  border-top: 1px solid var(--line);
-}
-
-/* 章扉のような中央寄せの見出し */
-.chapter-head {
-  text-align: center;
-  margin-bottom: 22px;
-}
-
-.chapter-num {
-  margin: 0 0 8px;
-  font-size: 13px;
-  letter-spacing: 6px;
-  color: var(--accent);
-}
-
-.chapter-title {
-  margin: 0;
-  font-size: 23px;
-  font-weight: 600;
-}
-
-.chapter-orn {
-  display: block;
-  margin-top: 12px;
-  color: var(--muted);
-  font-size: 14px;
-  opacity: 0.7;
-}
-
-.chapter-body {
-  white-space: pre-wrap;
-  line-height: 2.1;
-}
-
-.past-answers .past-answer {
-  display: block;
-  text-decoration: none;
-  color: var(--ink);
-  background: #fffdf9;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 20px 24px;
-  margin: 16px 0;
-}
-
-/* セクション（1質問=1ページ）── 目次の一節のように */
-.section-link {
-  display: block;
-  text-decoration: none;
-  color: var(--ink);
-  border-top: 1px dashed var(--line);
-  padding: 18px 0 14px;
-}
-
-.section-link:first-of-type {
-  border-top: none;
-}
-
-.section-q {
-  display: block;
-  font-weight: 600;
-  font-size: 18px;
-  margin-bottom: 8px;
-}
-
-/* 章プレビューの本文＝「読む所」。冒頭の一節を縦組みで覗かせる。
-   縦組みの block は width を固定しないと内容ぶん横に広がってはみ出すため、
-   width:100% で物理幅を親に固定し、高さで切り取る（横スクロールは出さない）。 */
-.section-body {
-  display: block;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  width: 100%;
-  max-width: 100%;
-  height: 8.5em;
-  line-height: 1.9;
-  letter-spacing: 0.04em;
-  text-indent: 1em;
-  margin: 6px 0 2px;
-  color: #3a342b;
+    inset 0 0 22px rgba(43, 38, 32, 0.04),
+    0 12px 26px rgba(43, 38, 32, 0.14);
+  padding: 26px 24px;
   overflow: hidden;
 }
 
-.section-edit-hint {
-  display: inline-block;
-  margin-top: 8px;
-  font-size: 13px;
+.leaf-inner {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* 質問は見出しとして、本文との間に縦罫を引く（縦組みでは block-end = 左）。 */
+.leaf-q {
+  font-size: 19px;
+  font-weight: 600;
+  margin: 0;
+  margin-block-end: 1em;
+  padding-block-end: 0.9em;
+  border-block-end: 1px solid var(--line);
+}
+
+.leaf-body {
+  font-size: 19px;
+  line-height: 2.05;
+  letter-spacing: 0.03em;
+  text-indent: 1em;
+  margin: 0;
+  white-space: pre-wrap;
+  color: #3a342b;
+}
+
+/* 章扉ページ：中央に 第◯章＋タイトル＋飾り */
+.chapter-leaf {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(120% 80% at 50% 50%, #fffdf9, #f6efe3);
+}
+
+.chapter-leaf .leaf-inner {
+  width: auto;
+  height: auto;
+  max-height: 100%;
+  text-align: center;
+}
+
+.chapter-leaf .chapter-num {
+  font-size: 14px;
+  letter-spacing: 6px;
   color: var(--accent);
+  margin: 0;
+  margin-block-end: 0.7em;
+}
+
+.chapter-leaf .chapter-title {
+  font-size: 26px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.chapter-leaf .chapter-orn {
+  margin: 0;
+  margin-block-start: 0.7em;
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+/* ページ隅の「直す」操作（縦組みの邪魔をしない左下に） */
+.leaf-edit {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  font-size: 12px;
+  color: var(--accent);
+  text-decoration: none;
+  background: rgba(253, 251, 246, 0.85);
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.book-hint {
+  text-align: center;
+  margin: 4px 0 0;
 }
 
 /* 確定した本文＝「読む所」。製本後の小説に合わせ縦組み（右→左）。
