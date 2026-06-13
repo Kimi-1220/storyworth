@@ -4,6 +4,16 @@ import { getStudioStoryteller } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
+// 章番号を漢数字に（第一章…）。本らしい見出しにするため。
+function kanjiNum(n: number): string {
+  const d = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
+  if (n <= 0) return String(n);
+  if (n < 10) return d[n];
+  if (n < 20) return "十" + (n % 10 ? d[n % 10] : "");
+  const tens = Math.floor(n / 10);
+  return (tens > 1 ? d[tens] : "") + "十" + (n % 10 ? d[n % 10] : "");
+}
+
 export default async function StudioHome({
   searchParams,
 }: {
@@ -115,27 +125,35 @@ export default async function StudioHome({
 
       {chapterGroups.length > 0 && (
         <section className="chapters">
-          <h2>育っていく、あなたの本</h2>
-          {chapterGroups.map((c, i) => (
-            <article className="chapter" key={c.category}>
-              <h3>
-                第{i + 1}章「{c.title}」
-              </h3>
-              {c.sections.map((s) => (
-                <Link
-                  key={s.id}
-                  className="section-link"
-                  href={`/studio/prompts/${s.promptId}`}
-                >
-                  <span className="section-q">{s.prompt.question.text}</span>
-                  <span className="section-body">{s.body.slice(0, 140)}…</span>
-                  <span className="section-edit-hint">
-                    ✎ {s.edited ? "編集済み" : "このページを直す"}
-                  </span>
-                </Link>
-              ))}
-            </article>
-          ))}
+          <h2 className="chapters-title">育っていく、あなたの本</h2>
+          <div className="book">
+            {chapterGroups.map((c, i) => (
+              <article className="chapter" key={c.category}>
+                <header className="chapter-head">
+                  <p className="chapter-num">第{kanjiNum(i + 1)}章</p>
+                  <h3 className="chapter-title">{c.title}</h3>
+                  <span className="chapter-orn">❦</span>
+                </header>
+                <div className="chapter-pages">
+                  {c.sections.map((s) => (
+                    <Link
+                      key={s.id}
+                      className="section-link"
+                      href={`/studio/prompts/${s.promptId}`}
+                    >
+                      <span className="section-q">{s.prompt.question.text}</span>
+                      <span className="section-body">
+                        {s.body.slice(0, 140)}…
+                      </span>
+                      <span className="section-edit-hint">
+                        ✎ {s.edited ? "編集済み" : "このページを直す"}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
         </section>
       )}
 

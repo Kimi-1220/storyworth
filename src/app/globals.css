@@ -330,18 +330,77 @@ a.cta {
   margin-top: 12px;
 }
 
-/* 育っていく章 */
-.chapters .chapter,
-.past-answers .past-answer {
-  background: #fffdf9;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 20px 24px;
-  margin: 16px 0;
+/* 育っていく章 ── 一冊の本に見せる */
+.chapters-title {
+  text-align: center;
+  font-size: 21px;
+  letter-spacing: 4px;
+  margin: 36px 0 8px;
 }
 
-.chapter h3 {
-  margin-top: 0;
+.chapters-title::after {
+  content: "";
+  display: block;
+  width: 44px;
+  height: 1px;
+  margin: 14px auto 24px;
+  background: var(--accent);
+  opacity: 0.5;
+}
+
+/* 紙を綴じた一冊。右側に重なったページの小口を覗かせる。 */
+.book {
+  position: relative;
+  background:
+    linear-gradient(90deg, rgba(43, 38, 32, 0.06), rgba(43, 38, 32, 0) 10px),
+    #fdfbf6;
+  border: 1px solid var(--line);
+  border-radius: 3px 8px 8px 3px;
+  padding: 8px 0;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    4px 5px 0 -1px #f4eee2,
+    7px 9px 0 -2px #ece5d6,
+    0 16px 34px rgba(43, 38, 32, 0.16);
+}
+
+.chapters .chapter {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  margin: 0;
+  padding: 32px 30px 28px;
+}
+
+.chapters .chapter + .chapter {
+  border-top: 1px solid var(--line);
+}
+
+/* 章扉のような中央寄せの見出し */
+.chapter-head {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.chapter-num {
+  margin: 0 0 8px;
+  font-size: 13px;
+  letter-spacing: 6px;
+  color: var(--accent);
+}
+
+.chapter-title {
+  margin: 0;
+  font-size: 23px;
+  font-weight: 600;
+}
+
+.chapter-orn {
+  display: block;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 14px;
+  opacity: 0.7;
 }
 
 .chapter-body {
@@ -353,38 +412,81 @@ a.cta {
   display: block;
   text-decoration: none;
   color: var(--ink);
+  background: #fffdf9;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin: 16px 0;
 }
 
-/* セクション（1質問=1ページ） */
+/* セクション（1質問=1ページ）── 目次の一節のように */
 .section-link {
   display: block;
   text-decoration: none;
   color: var(--ink);
-  border-top: 1px solid var(--line);
-  padding: 14px 0 10px;
+  border-top: 1px dashed var(--line);
+  padding: 18px 0 14px;
 }
 
 .section-link:first-of-type {
   border-top: none;
 }
 
+.section-q {
+  display: block;
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+/* 章プレビューの本文＝「読む所」。冒頭の一節を縦組みで覗かせる。
+   高さで切り取り、横スクロールは出さない（タップで本ページへ）。 */
 .section-body {
   display: block;
-  line-height: 2;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  height: 8.5em;
+  line-height: 1.9;
+  letter-spacing: 0.04em;
+  text-indent: 1em;
+  margin: 6px 0 2px;
+  color: #3a342b;
+  overflow: hidden;
 }
 
 .section-edit-hint {
   display: inline-block;
-  margin-top: 6px;
-  font-size: 14px;
+  margin-top: 8px;
+  font-size: 13px;
   color: var(--accent);
 }
 
+/* 確定した本文＝「読む所」。製本後の小説に合わせ縦組み（右→左）。
+   入力・編集欄（.manuscript-input）は横書きのまま。 */
 .section-view .manuscript {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  height: min(62vh, 560px);
   white-space: pre-wrap;
-  line-height: 2.1;
+  line-height: 2.05;
+  letter-spacing: 0.05em;
   font-size: 20px;
   text-indent: 1em;
+  padding: 6px 2px 6px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+
+/* 縦組みの読み面では、編集ボタンは本文の左（読み終わり側）下に置く */
+.section-view {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.section-view .edit-btn {
+  margin-top: 14px;
 }
 
 .edit-btn {
@@ -479,12 +581,42 @@ a.cta {
   padding-top: 16px;
 }
 
-/* 本タブ: シンプルな質問を見出しに */
+/* 本タブ: 一枚の紙のページに見せる */
+.book-page {
+  position: relative;
+  background:
+    linear-gradient(90deg, rgba(43, 38, 32, 0.05), rgba(43, 38, 32, 0) 10px),
+    #fdfbf6;
+  border: 1px solid var(--line);
+  border-radius: 3px 8px 8px 3px;
+  padding: 34px 30px 40px;
+  box-shadow:
+    4px 5px 0 -1px #f4eee2,
+    0 14px 30px rgba(43, 38, 32, 0.12);
+}
+
+.book-page > .muted:first-child {
+  text-align: center;
+  letter-spacing: 4px;
+}
+
+/* 本タブ: シンプルな質問を見出しに（章扉ふうに中央へ） */
 .book-q {
   font-size: 22px;
-  margin: 4px 0 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--line);
+  text-align: center;
+  margin: 6px 0 24px;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.book-q::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 1px;
+  margin: 16px auto 0;
+  background: var(--accent);
+  opacity: 0.5;
 }
 
 .section-q {
