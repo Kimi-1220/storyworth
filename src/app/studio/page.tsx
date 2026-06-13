@@ -14,6 +14,45 @@ function kanjiNum(n: number): string {
   return (tens > 1 ? d[tens] : "") + "十" + (n % 10 ? d[n % 10] : "");
 }
 
+// 本文を「1ページに収まる量」で区切り、本物の本のようにページ送りで読めるようにする。
+// 縦組み1ページの目安文字数（スマホ基準・控えめ）。1ページ目は質問見出しのぶん少なめ。
+const FIRST_PAGE_CHARS = 85;
+const CONT_PAGE_CHARS = 120;
+
+function paginateBody(body: string): string[] {
+  const text = body.trim();
+  if (!text) return [""];
+  const pages: string[] = [];
+  let i = 0;
+  let cap = FIRST_PAGE_CHARS;
+  while (i < text.length) {
+    let chunk = text.slice(i, i + cap);
+    // ページ途中で切れる場合、近くに改行があれば段落の切れ目で割る。
+    if (i + cap < text.length) {
+      const nl = chunk.lastIndexOf("\n");
+      if (nl > cap * 0.5) chunk = chunk.slice(0, nl + 1);
+    }
+    pages.push(chunk.replace(/^\n+/, "").replace(/\n+$/, ""));
+    i += chunk.length;
+    cap = CONT_PAGE_CHARS;
+  }
+  return pages.length ? pages : [""];
+}
+
+// 本ページャ用の1枚（章扉 or 質問ページ）。
+type Leaf =
+  | { kind: "chapter"; key: string; num: string; title: string }
+  | {
+      kind: "page";
+      key: string;
+      promptId: string;
+      question: string | null;
+      body: string;
+      edited: boolean;
+      idx: number;
+      total: number;
+    };
+
 export default async function StudioHome({
   searchParams,
 }: {
@@ -90,6 +129,32 @@ export default async function StudioHome({
     }))
     .sort((a, b) => a.order - b.order);
 
+  // 本を1枚ずつのページ（章扉＋質問ページ。長い本文は複数ページに分割）に展開。
+  const leaves: Leaf[] = [];
+  chapterGroups.forEach((c, ci) => {
+    leaves.push({
+      kind: "chapter",
+      key: `ch-${c.category}`,
+      num: kanjiNum(ci + 1),
+      title: c.title,
+    });
+    c.sections.forEach((s) => {
+      const pages = paginateBody(s.body);
+      pages.forEach((p, pi) => {
+        leaves.push({
+          kind: "page",
+          key: `${s.id}-${pi}`,
+          promptId: s.promptId,
+          question: pi === 0 ? s.prompt.question.text : null,
+          body: p,
+          edited: s.edited,
+          idx: pi + 1,
+          total: pages.length,
+        });
+      });
+    });
+  });
+
   return (
     <div className="studio">
       {/* 表紙モック: 初日から本人を「著者」として載せる */}
@@ -126,33 +191,41 @@ export default async function StudioHome({
       {chapterGroups.length > 0 && (
         <section className="chapters">
           <h2 className="chapters-title">育っていく、あなたの本</h2>
+          {/* 一冊の本を横にめくって読む（右→左／和書の向き）。
+              章扉ページ→質問ページ（長文は複数ページ）をページ送りで並べる。 */}
           <div className="book">
-            {chapterGroups.map((c, i) => (
-              <article className="chapter" key={c.category}>
-                <header className="chapter-head">
-                  <p className="chapter-num">第{kanjiNum(i + 1)}章</p>
-                  <h3 className="chapter-title">{c.title}</h3>
-                  <span className="chapter-orn">❦</span>
-                </header>
-                <div className="chapter-pages">
-                  {c.sections.map((s) => (
+            <div className="book-pager">
+              {leaves.map((lf) =>
+                lf.kind === "chapter" ? (
+                  <div className="leaf chapter-leaf" key={lf.key}>
+                    <div className="leaf-inner">
+                      <p className="chapter-num">第{lf.num}章</p>
+                      <h3 className="chapter-title">{lf.title}</h3>
+                      <span className="chapter-orn">❦</span>
+                    </div>
+                  </div>
+                ) : (
+                  <article className="leaf section-leaf" key={lf.key}>
+                    <div className="leaf-inner">
+                      {lf.question && <h4 className="leaf-q">{lf.question}</h4>}
+                      <p className="leaf-body">{lf.body}</p>
+                    </div>
+                    {lf.total > 1 && (
+                      <span className="leaf-folio">
+                        {lf.idx} / {lf.total}
+                      </span>
+                    )}
                     <Link
-                      key={s.id}
-                      className="section-link"
-                      href={`/studio/prompts/${s.promptId}`}
+                      className="leaf-edit"
+                      href={`/studio/prompts/${lf.promptId}`}
                     >
-                      <span className="section-q">{s.prompt.question.text}</span>
-                      <span className="section-body">
-                        {s.body.slice(0, 140)}…
-                      </span>
-                      <span className="section-edit-hint">
-                        ✎ {s.edited ? "編集済み" : "このページを直す"}
-                      </span>
+                      ✎ {lf.edited ? "編集済み" : "直す"}
                     </Link>
-                  ))}
-                </div>
-              </article>
-            ))}
+                  </article>
+                ),
+              )}
+            </div>
+            <p className="book-hint muted">← 横にめくって読む</p>
           </div>
         </section>
       )}
