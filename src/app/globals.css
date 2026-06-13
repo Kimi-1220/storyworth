@@ -439,12 +439,19 @@ a.cta {
   margin-bottom: 8px;
 }
 
+/* 章プレビューの本文＝「読む所」。冒頭の一節を縦組みで覗かせる。
+   高さで切り取り、横スクロールは出さない（タップで本ページへ）。 */
 .section-body {
   display: block;
-  line-height: 2;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  height: 8.5em;
+  line-height: 1.9;
+  letter-spacing: 0.04em;
   text-indent: 1em;
-  text-align: justify;
+  margin: 6px 0 2px;
   color: #3a342b;
+  overflow: hidden;
 }
 
 .section-edit-hint {
@@ -454,11 +461,32 @@ a.cta {
   color: var(--accent);
 }
 
+/* 確定した本文＝「読む所」。製本後の小説に合わせ縦組み（右→左）。
+   入力・編集欄（.manuscript-input）は横書きのまま。 */
 .section-view .manuscript {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  height: min(62vh, 560px);
   white-space: pre-wrap;
-  line-height: 2.1;
+  line-height: 2.05;
+  letter-spacing: 0.05em;
   font-size: 20px;
   text-indent: 1em;
+  padding: 6px 2px 6px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+
+/* 縦組みの読み面では、編集ボタンは本文の左（読み終わり側）下に置く */
+.section-view {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.section-view .edit-btn {
+  margin-top: 14px;
 }
 
 .edit-btn {
