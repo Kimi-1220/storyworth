@@ -17,6 +17,7 @@ model Storyteller {
   prompts    Prompt[]
   magicLinks MagicLink[]
   chapters   Chapter[]
+  sections   Section[]
 }
 
 // 執筆スタジオへのマジックリンク（1回限り・短命トークン）。
@@ -34,20 +35,40 @@ model MagicLink {
   @@index([storytellerId])
 }
 
-// 育っていく章。回答が溜まるたびにLLMで下書きを生成し、スタジオで見せる。
-// → docs/novel.md / docs/writing-studio.md「章がリアルタイムで育つ」
+// 章。カテゴリ（章テーマ）ごとに1つ。本文はセクションの集まりで構成し、
+// 章自体はタイトルだけが内容に合わせて更新されていく。
+// → docs/novel.md / docs/writing-studio.md
 model Chapter {
   id            String      @id @default(cuid())
   storyteller   Storyteller @relation(fields: [storytellerId], references: [id])
   storytellerId String
   category      String // 質問カテゴリ＝章のテーマ
   title         String
-  body          String // 生成された本文の下書き
+  body          String? // 旧: 章まるごとの下書き（現在は未使用・セクションに移行）
   sortOrder     Int         @default(0)
   updatedAt     DateTime    @updatedAt
   createdAt     DateTime    @default(now())
 
   @@unique([storytellerId, category])
+}
+
+// セクション。1質問（出題）= 1セクション。
+// 回答するとそのセクションだけを生成。本人が編集でき、後から回答が
+// 加わっても既存の言い回し・事実は極力保ったまま追記の文脈だけ織り込む。
+model Section {
+  id            String      @id @default(cuid())
+  storyteller   Storyteller @relation(fields: [storytellerId], references: [id])
+  storytellerId String
+  prompt        Prompt      @relation(fields: [promptId], references: [id])
+  promptId      String      @unique
+  category      String // 所属する章テーマ
+  body          String // 生成 or 本人編集後の本文
+  edited        Boolean     @default(false) // 本人が手で編集したか
+  sortOrder     Int         @default(0)
+  updatedAt     DateTime    @updatedAt
+  createdAt     DateTime    @default(now())
+
+  @@index([storytellerId, category])
 }
 
 // 質問マスタ（data/questions.json から seed で投入）
@@ -74,6 +95,7 @@ model Prompt {
   sentAt        DateTime?
   createdAt     DateTime    @default(now())
   answers       Answer[]
+  section       Section?
 
   @@unique([storytellerId, questionId])
 }

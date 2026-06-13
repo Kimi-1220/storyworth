@@ -33,27 +33,52 @@ export default async function StudioHome({
     );
   }
 
-  const [totalQuestions, categoryGroups, prompts, chapters] = await Promise.all([
-    prisma.question.count(),
-    prisma.question.findMany({ distinct: ["category"], select: { category: true } }),
-    prisma.prompt.findMany({
-      where: { storytellerId: me.id },
-      include: {
-        question: true,
-        _count: { select: { answers: true } },
-      },
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.chapter.findMany({
-      where: { storytellerId: me.id },
-      orderBy: { sortOrder: "asc" },
-    }),
-  ]);
+  const [totalQuestions, categoryGroups, prompts, chapters, sections] =
+    await Promise.all([
+      prisma.question.count(),
+      prisma.question.findMany({
+        distinct: ["category"],
+        select: { category: true },
+      }),
+      prisma.prompt.findMany({
+        where: { storytellerId: me.id },
+        include: {
+          question: true,
+          _count: { select: { answers: true } },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.chapter.findMany({
+        where: { storytellerId: me.id },
+      }),
+      prisma.section.findMany({
+        where: { storytellerId: me.id },
+        include: { prompt: { include: { question: true } } },
+        orderBy: { sortOrder: "asc" },
+      }),
+    ]);
 
   const open = prompts.find((p) => p.status === "open");
   const answered = prompts.filter((p) => p.status === "answered").length;
   const remaining = Math.max(totalQuestions - answered, 0);
   const totalChapters = categoryGroups.length;
+
+  // セクションを章（カテゴリ）ごとにまとめる。章の並びは最小sortOrderで決める。
+  const titleByCategory = new Map(chapters.map((c) => [c.category, c.title]));
+  const byCategory = new Map<string, typeof sections>();
+  for (const s of sections) {
+    const arr = byCategory.get(s.category) ?? [];
+    arr.push(s);
+    byCategory.set(s.category, arr);
+  }
+  const chapterGroups = [...byCategory.entries()]
+    .map(([category, secs]) => ({
+      category,
+      title: titleByCategory.get(category) ?? category,
+      sections: secs,
+      order: secs[0]?.sortOrder ?? 0,
+    }))
+    .sort((a, b) => a.order - b.order);
 
   return (
     <div className="studio">
@@ -74,7 +99,7 @@ export default async function StudioHome({
           )}
         </p>
         <p className="muted">
-          書き上がった章: {chapters.length} 章 / 全 {totalChapters} 章
+          書きはじめた章: {chapterGroups.length} 章 / 全 {totalChapters} 章
         </p>
       </div>
 
@@ -88,15 +113,26 @@ export default async function StudioHome({
         </div>
       )}
 
-      {chapters.length > 0 && (
+      {chapterGroups.length > 0 && (
         <section className="chapters">
           <h2>育っていく、あなたの本</h2>
-          {chapters.map((c, i) => (
-            <article className="chapter" key={c.id}>
+          {chapterGroups.map((c, i) => (
+            <article className="chapter" key={c.category}>
               <h3>
                 第{i + 1}章「{c.title}」
               </h3>
-              <p className="chapter-body">{c.body.slice(0, 220)}…</p>
+              {c.sections.map((s) => (
+                <Link
+                  key={s.id}
+                  className="section-link"
+                  href={`/studio/prompts/${s.promptId}`}
+                >
+                  <span className="section-body">{s.body.slice(0, 160)}…</span>
+                  <span className="section-edit-hint">
+                    ✎ {s.edited ? "編集済み" : "このページを直す"}
+                  </span>
+                </Link>
+              ))}
             </article>
           ))}
         </section>
