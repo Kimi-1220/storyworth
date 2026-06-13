@@ -11,7 +11,7 @@ import { latestOpenPrompt } from "@/lib/prompts";
 import { saveMedia } from "@/lib/storage";
 import { createMagicLink } from "@/lib/auth";
 import { generateReaction } from "@/lib/llm";
-import { regenerateChapter } from "@/lib/chapters";
+import { regenerateSection } from "@/lib/sections";
 
 export async function POST(req: NextRequest) {
   if (!lineConfigured()) {
@@ -137,9 +137,9 @@ async function handleEvent(event: webhook.Event) {
     (answeredText ? await generateReaction(prompt.question.text, answeredText) : null) ??
     "すてきなお話をありがとうございます。本に書き加えておきますね。";
 
-  // テキスト回答なら章の下書きも更新（本が育つ）
+  // テキスト回答ならこの質問のセクションを生成/追記（本が育つ）
   if (answeredText) {
-    await regenerateChapter(storyteller.id, prompt.question.category);
+    await regenerateSection(prompt.id, answeredText);
   }
 
   const studioUrl = await createMagicLink(storyteller.id, prompt.id);

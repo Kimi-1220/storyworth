@@ -354,3 +354,65 @@ a.cta {
   text-decoration: none;
   color: var(--ink);
 }
+
+/* セクション（1質問=1ページ） */
+.section-link {
+  display: block;
+  text-decoration: none;
+  color: var(--ink);
+  border-top: 1px solid var(--line);
+  padding: 14px 0 10px;
+}
+
+.section-link:first-of-type {
+  border-top: none;
+}
+
+.section-body {
+  display: block;
+  line-height: 2;
+}
+
+.section-edit-hint {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--accent);
+}
+
+.section-view .manuscript {
+  white-space: pre-wrap;
+  line-height: 2.1;
+  font-size: 20px;
+  text-indent: 1em;
+}
+
+.edit-btn {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 16px;
+  align-self: flex-start;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.cancel-btn {
+  background: transparent;
+  color: var(--muted);
+  border: none;
+  padding: 10px 12px;
+  font-size: 16px;
+}
+
+.manuscript.raw {
+  color: var(--muted);
+  font-size: 17px;
+  text-indent: 0;
+}

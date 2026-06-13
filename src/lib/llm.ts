@@ -113,48 +113,68 @@ export async function novelizeQuestion(
   );
 }
 
-export type AnswerMaterial = {
-  question: string;
-  text: string;
-};
+const BIOGRAPHER = `${TONE}
 
-// 回答群 → 章の下書きを執筆（タイトル + 本文）。
-// 創作禁止・本人の言い回しを残す原則を守る。→ docs/novel.md
-export async function draftChapter(
-  storytellerName: string,
-  category: string,
-  materials: AnswerMaterial[],
-): Promise<{ title: string; body: string } | null> {
-  const material = materials
-    .map((m) => `■ 質問: ${m.question}\n  回答: ${m.text}`)
-    .join("\n\n");
-
-  const body = await generateText(
-    `${TONE}
-
-あなたは伝記作家です。語り手本人の回答だけを素材に、読み物として面白い一人称の章を書きます。
+あなたは伝記作家です。語り手本人の回答だけを素材に、読み物として面白い一人称の文章を書きます。
 鉄則:
 ・語られていないエピソードを創作しない。描写の肉付けは本人の言葉の範囲内で。
 ・本人の口癖・言い回しはできるだけ残す（標準語に均しすぎない）。
-・「醤油を借りに走った」のように具体的な情景で書く。羅列にしない。`,
-    `語り手「${storytellerName}」さんの「${category}」の章を、いまある回答だけを素材に書いてください。
-冒頭に章タイトルを一行（「# タイトル」の形式）で置き、続けて本文を書いてください。
-本文は400〜800字程度。素材が薄ければ無理に膨らませず、今ある分だけで自然に。
+・「醤油を借りに走った」のように具体的な情景で書く。羅列にしない。`;
 
---- 素材 ---
-${material}`,
-    2000,
-  );
-  if (!body) return null;
+// 1質問=1セクションの本文を生成する。
+// existingBody が無ければ新規執筆、あれば「追記モード」:
+// 既存の言い回し・事実は極力保ち、新しい回答の内容だけを自然に織り込む。
+// → docs/novel.md / セクション単位の編集を壊さないための設計
+export async function draftSection(
+  storytellerName: string,
+  questionText: string,
+  newAnswerText: string,
+  existingBody?: string,
+): Promise<string | null> {
+  if (existingBody && existingBody.trim()) {
+    return generateText(
+      BIOGRAPHER,
+      `語り手「${storytellerName}」さんの、ある質問への一人称の文章があります。
+本人が手で直している場合もあるので、既存の文章はできるだけ尊重してください。
 
-  // 先頭の "# タイトル" を抽出
-  const lines = body.split("\n");
-  let title = category;
-  let rest = body;
-  const m = lines[0].match(/^#\s*(.+)$/);
-  if (m) {
-    title = m[1].trim();
-    rest = lines.slice(1).join("\n").trim();
+【質問】${questionText}
+
+【いまの文章】
+${existingBody}
+
+【あとから加わった本人の話】
+${newAnswerText}
+
+この「あとから加わった話」の内容を、いまの文章に自然に追記してください。
+既存の事実・言い回し・本人の編集はできるだけ変えず、新しい内容の文脈だけを足します。
+全体を書き直さないこと。更新後の本文だけを返してください（見出し不要）。`,
+      1500,
+    );
   }
-  return { title, body: rest };
+  return generateText(
+    BIOGRAPHER,
+    `語り手「${storytellerName}」さんの、次の質問への回答をもとに、一人称の短い文章（150〜400字程度）を書いてください。
+素材が薄ければ無理に膨らませず、今ある分だけで自然に。見出しは付けず本文だけを返してください。
+
+【質問】${questionText}
+【回答】${newAnswerText}`,
+    1200,
+  );
+}
+
+// 章タイトルだけを内容に合わせて付け直す（短く情緒のある見出し）。
+export async function chapterTitle(
+  category: string,
+  sectionBodies: string[],
+): Promise<string | null> {
+  if (sectionBodies.length === 0) return null;
+  const joined = sectionBodies.join("\n\n").slice(0, 3000);
+  return generateText(
+    TONE,
+    `次の文章群は、ある自伝の「${category}」の章を構成するものです。
+この章にふさわしい、短く情緒のある章タイトルを1つだけ提案してください（15文字以内・記号や鉤括弧なし・タイトルのみ）。
+
+${joined}`,
+    100,
+  );
 }

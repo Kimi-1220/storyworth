@@ -6,7 +6,7 @@ import { getStudioStoryteller } from "@/lib/auth";
 import { mediaTypeOf, saveMedia } from "@/lib/storage";
 import { transcribeAudio } from "@/lib/transcribe";
 import { generateFollowups, generateReaction } from "@/lib/llm";
-import { regenerateChapter } from "@/lib/chapters";
+import { regenerateSection } from "@/lib/sections";
 
 // 執筆スタジオから回答を受け取る。
 // テキスト（書く）/ 録音音声（話す）→ 文字起こし、写真添付に対応。
@@ -91,10 +91,31 @@ export async function submitStudioAnswer(formData: FormData) {
     },
   });
 
-  // 章の下書きを更新（本が育つ）
+  // この質問のセクションを生成/追記（既存があれば言い回しを保って追記）
   if (answeredText) {
-    await regenerateChapter(me.id, prompt.question.category);
+    await regenerateSection(promptId, answeredText);
   }
+
+  revalidatePath(`/studio/prompts/${promptId}`);
+  revalidatePath("/studio");
+}
+
+// 本人がセクションの本文を手で編集する。以後この本文が土台になる。
+export async function editSection(formData: FormData) {
+  const me = await getStudioStoryteller();
+  if (!me) return;
+
+  const promptId = String(formData.get("promptId") ?? "");
+  const body = String(formData.get("body") ?? "").trim();
+  if (!promptId || !body) return;
+
+  const prompt = await prisma.prompt.findUnique({ where: { id: promptId } });
+  if (!prompt || prompt.storytellerId !== me.id) return;
+
+  await prisma.section.update({
+    where: { promptId },
+    data: { body, edited: true },
+  });
 
   revalidatePath(`/studio/prompts/${promptId}`);
   revalidatePath("/studio");

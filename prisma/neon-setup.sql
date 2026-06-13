@@ -25,17 +25,34 @@ CREATE TABLE IF NOT EXISTS "MagicLink" (
     CONSTRAINT "MagicLink_pkey" PRIMARY KEY ("token")
 );
 
--- 育っていく章（回答が溜まるたびにLLMで下書きを生成）
+-- 章（カテゴリごとに1つ・タイトルを内容に合わせて更新）
 CREATE TABLE IF NOT EXISTS "Chapter" (
     "id" TEXT NOT NULL,
     "storytellerId" TEXT NOT NULL,
     "category" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "body" TEXT NOT NULL,
+    "body" TEXT,
     "sortOrder" INTEGER NOT NULL DEFAULT 0,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "Chapter_pkey" PRIMARY KEY ("id")
+);
+
+-- 旧スキーマで body が NOT NULL だった場合は外す（セクションに本文が移行）
+ALTER TABLE "Chapter" ALTER COLUMN "body" DROP NOT NULL;
+
+-- セクション（1質問=1セクション。本人が編集可能）
+CREATE TABLE IF NOT EXISTS "Section" (
+    "id" TEXT NOT NULL,
+    "storytellerId" TEXT NOT NULL,
+    "promptId" TEXT NOT NULL,
+    "category" TEXT NOT NULL,
+    "body" TEXT NOT NULL,
+    "edited" BOOLEAN NOT NULL DEFAULT false,
+    "sortOrder" INTEGER NOT NULL DEFAULT 0,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "Section_pkey" PRIMARY KEY ("id")
 );
 
 CREATE TABLE IF NOT EXISTS "Question" (
@@ -82,6 +99,8 @@ CREATE UNIQUE INDEX IF NOT EXISTS "Storyteller_lineUserId_key" ON "Storyteller"(
 CREATE UNIQUE INDEX IF NOT EXISTS "Storyteller_linkCode_key" ON "Storyteller"("linkCode");
 CREATE INDEX IF NOT EXISTS "MagicLink_storytellerId_idx" ON "MagicLink"("storytellerId");
 CREATE UNIQUE INDEX IF NOT EXISTS "Chapter_storytellerId_category_key" ON "Chapter"("storytellerId", "category");
+CREATE UNIQUE INDEX IF NOT EXISTS "Section_promptId_key" ON "Section"("promptId");
+CREATE INDEX IF NOT EXISTS "Section_storytellerId_category_idx" ON "Section"("storytellerId", "category");
 CREATE UNIQUE INDEX IF NOT EXISTS "Question_text_key" ON "Question"("text");
 CREATE UNIQUE INDEX IF NOT EXISTS "Prompt_storytellerId_questionId_key" ON "Prompt"("storytellerId", "questionId");
 
@@ -93,6 +112,14 @@ EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN
   ALTER TABLE "Chapter" ADD CONSTRAINT "Chapter_storytellerId_fkey" FOREIGN KEY ("storytellerId") REFERENCES "Storyteller"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "Section" ADD CONSTRAINT "Section_storytellerId_fkey" FOREIGN KEY ("storytellerId") REFERENCES "Storyteller"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE "Section" ADD CONSTRAINT "Section_promptId_fkey" FOREIGN KEY ("promptId") REFERENCES "Prompt"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 DO $$ BEGIN

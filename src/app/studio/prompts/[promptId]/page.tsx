@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { getStudioStoryteller } from "@/lib/auth";
 import AnswerForm from "@/app/studio/AnswerForm";
+import SectionEditor from "@/app/studio/SectionEditor";
 
 export const dynamic = "force-dynamic";
 
@@ -19,19 +20,11 @@ export default async function StudioPromptPage({
     where: { id: promptId },
     include: {
       question: true,
+      section: true,
       answers: { orderBy: { createdAt: "asc" } },
     },
   });
   if (!prompt || prompt.storytellerId !== me.id) notFound();
-
-  const chapter = await prisma.chapter.findUnique({
-    where: {
-      storytellerId_category: {
-        storytellerId: me.id,
-        category: prompt.question.category,
-      },
-    },
-  });
 
   const followups = (prompt.followups ?? "")
     .split("\n")
@@ -78,11 +71,25 @@ export default async function StudioPromptPage({
         </div>
       )}
 
+      {/* 本のこのページ（セクション）。直接書き直せる。 */}
+      {prompt.section && (
+        <section className="chapters">
+          <h2>本のこのページ</h2>
+          <article className="chapter">
+            <SectionEditor promptId={prompt.id} body={prompt.section.body} />
+            <p className="muted">
+              ここはあなたの言葉から起こした文章です。直したいところは、いつでも書き直せます。
+              {prompt.section.edited && " （編集済み）"}
+            </p>
+          </article>
+        </section>
+      )}
+
       {prompt.answers.length > 0 && (
         <section className="your-words">
-          <h2>あなたの言葉</h2>
+          <h2>あなたが送った言葉・写真</h2>
           {textAnswers.map((a) => (
-            <p className="manuscript" key={a.id}>
+            <p className="manuscript raw" key={a.id}>
               {a.text}
             </p>
           ))}
@@ -99,16 +106,6 @@ export default async function StudioPromptPage({
                 <img key={a.id} src={a.mediaPath!} alt="思い出の写真" />
               ))}
           </div>
-        </section>
-      )}
-
-      {chapter && (
-        <section className="chapters">
-          <h2>この話が、本になっていきます</h2>
-          <article className="chapter">
-            <h3>「{chapter.title}」</h3>
-            <p className="chapter-body">{chapter.body}</p>
-          </article>
         </section>
       )}
     </div>
