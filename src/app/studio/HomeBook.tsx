@@ -60,7 +60,8 @@ export default function HomeBook({ items }: { items: BookItem[] }) {
             <article className="leaf section-leaf" key={`${it.key}-${i}`}>
               <div className="leaf-head">
                 <span className="leaf-tag">
-                  <span className="tag-chapter">{it.category}</span>
+                  <span className="tag-chapter">{it.category}</span> ／{" "}
+                  {it.question}
                 </span>
                 <Link
                   className="leaf-edit"
