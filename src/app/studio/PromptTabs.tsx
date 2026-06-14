@@ -63,7 +63,6 @@ export default function PromptTabs({
         />
       ) : (
         <div className="book-read-wrap prompt-body-scroll">
-          <p className="muted book-kicker">{category}</p>
           {section ? (
             <>
               <SectionEditor
