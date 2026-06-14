@@ -330,22 +330,29 @@ a.cta {
   margin-top: 12px;
 }
 
-/* 育っていく章 ── 一冊の本に見せる */
-.chapters-title {
-  text-align: center;
-  font-size: 21px;
-  letter-spacing: 4px;
-  margin: 36px 0 8px;
+/* 本のツールバー ── 目次モーダル・最後の質問へのジャンプ */
+.book-toolbar {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 32px 0 16px;
 }
 
-.chapters-title::after {
-  content: "";
-  display: block;
-  width: 44px;
-  height: 1px;
-  margin: 14px auto 24px;
-  background: var(--accent);
-  opacity: 0.5;
+.book-nav-btn {
+  font: inherit;
+  font-size: 14px;
+  color: var(--accent);
+  background: #fffdf9;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 9px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.book-nav-btn:active {
+  background: #f6efe3;
 }
 
 /* 一冊の本を、横にめくって読むページャに。右→左へめくる（和書の向き）。
@@ -556,6 +563,117 @@ a.cta {
 .book-hint {
   text-align: center;
   margin: 4px 0 0;
+}
+
+/* 目次モーダル ── 章・質問を選んで該当ページへジャンプ（ボトムシート） */
+.nav-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(43, 38, 32, 0.45);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.nav-modal {
+  width: 100%;
+  max-width: 560px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  background: #fdfbf6;
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -8px 30px rgba(43, 38, 32, 0.2);
+}
+
+.nav-modal-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.nav-modal-title {
+  font-size: 17px;
+  letter-spacing: 3px;
+  margin: 0;
+}
+
+.nav-modal-close {
+  font: inherit;
+  font-size: 18px;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.nav-modal-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 12px 24px;
+}
+
+.nav-chapter {
+  margin-top: 8px;
+}
+
+.nav-chapter-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.nav-chapter-num {
+  flex: 0 0 auto;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--accent);
+}
+
+.nav-chapter-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.nav-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #3a342b;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 11px 8px 11px 20px;
+  border-bottom: 1px solid rgba(43, 38, 32, 0.06);
+}
+
+.nav-item:active {
+  background: #f6efe3;
+}
+
+.nav-item-next {
+  margin-top: 12px;
+  color: var(--accent);
+  font-weight: 600;
+  padding-left: 8px;
+  border-bottom: none;
 }
 
 /* 確定した本文＝「読む所」。製本後の小説に合わせ縦組み（右→左）。
