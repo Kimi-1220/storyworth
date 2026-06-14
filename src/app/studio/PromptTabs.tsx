@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import SectionEditor from "@/app/studio/SectionEditor";
 import Interview, { type TLItem } from "@/app/studio/Interview";
 
@@ -9,6 +10,7 @@ import Interview, { type TLItem } from "@/app/studio/Interview";
 //   入力欄は常に下に見える。送信中は進捗ラベルで「書いている手応え」を出す。
 // ・本: シンプルな質問を見出しに、起こした文章（編集可・縦組み）＋写真。
 export default function PromptTabs({
+  backHref,
   promptId,
   novelText,
   plainQuestion,
@@ -17,6 +19,7 @@ export default function PromptTabs({
   photos,
   section,
 }: {
+  backHref: string;
   promptId: string;
   novelText: string;
   plainQuestion: string;
@@ -28,23 +31,28 @@ export default function PromptTabs({
   const [tab, setTab] = useState<"interview" | "book">("interview");
 
   return (
-    <div>
-      <div className="studio-tabs">
-        <button
-          type="button"
-          className={tab === "interview" ? "stab active" : "stab"}
-          onClick={() => setTab("interview")}
-        >
-          取材
-        </button>
-        <button
-          type="button"
-          className={tab === "book" ? "stab active" : "stab"}
-          onClick={() => setTab("book")}
-        >
-          本のこのページ
-        </button>
-      </div>
+    <>
+      <header className="prompt-topbar">
+        <Link className="topbar-back" href={backHref} aria-label="戻る">
+          ←
+        </Link>
+        <div className="topbar-tabs">
+          <button
+            type="button"
+            className={tab === "interview" ? "stab active" : "stab"}
+            onClick={() => setTab("interview")}
+          >
+            取材
+          </button>
+          <button
+            type="button"
+            className={tab === "book" ? "stab active" : "stab"}
+            onClick={() => setTab("book")}
+          >
+            本のこのページ
+          </button>
+        </div>
+      </header>
 
       {tab === "interview" ? (
         <Interview
@@ -54,14 +62,17 @@ export default function PromptTabs({
           timeline={timeline}
         />
       ) : (
-        <div className="book-page">
-          <p className="muted">{category}</p>
-          <h2 className="book-q">{plainQuestion}</h2>
+        <div className="book-read-wrap prompt-body-scroll">
+          <p className="muted book-kicker">{category}</p>
           {section ? (
             <>
-              <SectionEditor promptId={promptId} body={section.body} />
-              <p className="muted">
-                縦書きのページです。横にスワイプすると読み進められます。あなたの言葉から起こした文章なので、直したいところはいつでも書き直せます。
+              <SectionEditor
+                promptId={promptId}
+                question={plainQuestion}
+                body={section.body}
+              />
+              <p className="muted book-read-hint">
+                縦書きのページです。横にめくって読めます。あなたの言葉から起こした文章なので、直したいところはいつでも書き直せます。
                 {section.edited && " （編集済み）"}
               </p>
             </>
@@ -80,6 +91,6 @@ export default function PromptTabs({
           )}
         </div>
       )}
-    </div>
+    </>
   );
 }

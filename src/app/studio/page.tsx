@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { getStudioStoryteller } from "@/lib/auth";
+import { paginateBody } from "@/lib/paginate";
 
 export const dynamic = "force-dynamic";
 
@@ -12,31 +13,6 @@ function kanjiNum(n: number): string {
   if (n < 20) return "十" + (n % 10 ? d[n % 10] : "");
   const tens = Math.floor(n / 10);
   return (tens > 1 ? d[tens] : "") + "十" + (n % 10 ? d[n % 10] : "");
-}
-
-// 本文を「1ページに収まる量」で区切り、本物の本のようにページ送りで読めるようにする。
-// 縦組み1ページの目安文字数（スマホ基準・控えめ）。1ページ目は質問見出しのぶん少なめ。
-const FIRST_PAGE_CHARS = 85;
-const CONT_PAGE_CHARS = 120;
-
-function paginateBody(body: string): string[] {
-  const text = body.trim();
-  if (!text) return [""];
-  const pages: string[] = [];
-  let i = 0;
-  let cap = FIRST_PAGE_CHARS;
-  while (i < text.length) {
-    let chunk = text.slice(i, i + cap);
-    // ページ途中で切れる場合、近くに改行があれば段落の切れ目で割る。
-    if (i + cap < text.length) {
-      const nl = chunk.lastIndexOf("\n");
-      if (nl > cap * 0.5) chunk = chunk.slice(0, nl + 1);
-    }
-    pages.push(chunk.replace(/^\n+/, "").replace(/\n+$/, ""));
-    i += chunk.length;
-    cap = CONT_PAGE_CHARS;
-  }
-  return pages.length ? pages : [""];
 }
 
 // 本ページャ用の1枚（章扉 or 質問ページ）。

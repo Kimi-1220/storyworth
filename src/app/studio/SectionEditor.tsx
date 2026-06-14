@@ -3,14 +3,18 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { editSection } from "@/app/studio/actions";
+import { paginateBody } from "@/lib/paginate";
 
 // 本のこのページ（セクション）を本人が直接書き直せるエディタ。
-// 保存すると以後この本文が土台になり、勝手に書き換わらない。
+// 読み表示はホームと同じ「全画面ページめくり」（縦組み・右→左・長文は自動ページ分割）。
+// 編集に入ると横書きの原稿エディタになる。保存後はこの本文が土台になる。
 export default function SectionEditor({
   promptId,
+  question,
   body,
 }: {
   promptId: string;
+  question: string;
   body: string;
 }) {
   const router = useRouter();
@@ -19,12 +23,27 @@ export default function SectionEditor({
   const [pending, startTransition] = useTransition();
 
   if (!editing) {
+    const pages = paginateBody(body);
     return (
-      <div className="section-view">
-        <p className="manuscript">{body}</p>
+      <div className="book-read">
+        <div className="book-pager">
+          {pages.map((p, i) => (
+            <article className="leaf section-leaf" key={i}>
+              <div className="leaf-inner">
+                {i === 0 && <h4 className="leaf-q">{question}</h4>}
+                <p className="leaf-body">{p}</p>
+              </div>
+              {pages.length > 1 && (
+                <span className="leaf-folio">
+                  {i + 1} / {pages.length}
+                </span>
+              )}
+            </article>
+          ))}
+        </div>
         <button
           type="button"
-          className="edit-btn"
+          className="edit-btn book-edit-btn"
           onClick={() => {
             setText(body);
             setEditing(true);

@@ -358,7 +358,7 @@ a.cta {
 .book-pager {
   display: flex;
   direction: rtl; /* 最初のページを右に置き、左へめくる */
-  gap: 14px;
+  gap: 0; /* ページは画面幅ぴったり。1スワイプ＝1画面 */
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
@@ -377,7 +377,7 @@ a.cta {
   direction: ltr;
   flex: 0 0 100%;
   height: min(72vh, 640px);
-  scroll-snap-align: center;
+  scroll-snap-align: start;
   scroll-snap-stop: always; /* 1スワイプ＝1ページ */
   position: relative;
   background:
@@ -401,7 +401,7 @@ a.cta {
 
 /* 質問は見出しとして、本文との間に縦罫を引く（縦組みでは block-end = 左）。 */
 .leaf-q {
-  font-size: 19px;
+  font-size: 16px;
   font-weight: 600;
   margin: 0;
   margin-block-end: 1em;
@@ -410,9 +410,9 @@ a.cta {
 }
 
 .leaf-body {
-  font-size: 19px;
-  line-height: 2.05;
-  letter-spacing: 0.03em;
+  font-size: 16px;
+  line-height: 2;
+  letter-spacing: 0.02em;
   text-indent: 1em;
   margin: 0;
   white-space: pre-wrap;
@@ -567,6 +567,81 @@ a.cta {
   color: var(--muted);
   font-size: 17px;
   text-indent: 0;
+}
+
+/* ===== 質問ページ: ヘッダーを消し、全画面1枚で使う ===== */
+/* グローバルヘッダーを隠し、コンテナの上下余白も外す（:has 対応ブラウザのみ）。 */
+body:has(.prompt-page) .site-header {
+  display: none;
+}
+
+body:has(.prompt-page) .container {
+  padding: 0 24px;
+  max-width: 760px;
+}
+
+.prompt-page {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+
+/* 戻る＋2タブを1段にまとめた上部固定バー（背を低く） */
+.prompt-topbar {
+  flex: 0 0 auto;
+  margin: 0 -24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+
+.topbar-back {
+  flex: 0 0 auto;
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 22px;
+  line-height: 1;
+  padding: 6px 10px;
+}
+
+.topbar-tabs {
+  flex: 1 1 auto;
+  display: flex;
+  gap: 8px;
+}
+
+.topbar-tabs .stab {
+  flex: 1;
+  background: #fff;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px;
+  font-size: 15px;
+  align-self: stretch;
+}
+
+.topbar-tabs .stab.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* 上部バーの下を本体が占有。取材は高さいっぱい、本タブは縦スクロール。 */
+.prompt-page > .interview {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+}
+
+.prompt-body-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-top: 14px;
 }
 
 /* ===== 取材 / 本 タブ ===== */
@@ -796,7 +871,27 @@ a.cta {
   margin: 0;
 }
 
-/* 本タブ: 一枚の紙のページに見せる */
+/* 本タブの読み表示＝ホームと同じ全画面ページめくり */
+.book-kicker {
+  text-align: center;
+  letter-spacing: 4px;
+  margin: 4px 0 10px;
+}
+
+.book-read .book-pager {
+  margin: 0 -24px; /* コンテナ余白を打ち消して全画面幅に（ホームと揃える） */
+}
+
+.book-edit-btn {
+  display: block;
+  margin: 16px auto 0;
+}
+
+.book-read-hint {
+  margin-top: 16px;
+}
+
+/* 本タブ: 一枚の紙のページに見せる（未使用の旧スタイル） */
 .book-page {
   position: relative;
   background:

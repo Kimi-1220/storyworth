@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { getStudioStoryteller } from "@/lib/auth";
@@ -112,12 +111,9 @@ export default async function StudioPromptPage({
   timeline.sort((a, b) => a.at - b.at);
 
   return (
-    <div className="studio">
-      <p className="muted">
-        <Link href="/studio">← {me.name}の物語へ戻る</Link>
-      </p>
-
+    <div className="studio prompt-page">
       <PromptTabs
+        backHref="/studio"
         promptId={prompt.id}
         novelText={prompt.novelText ?? prompt.question.text}
         plainQuestion={prompt.question.text}
