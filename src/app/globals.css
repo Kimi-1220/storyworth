@@ -769,6 +769,55 @@ a.cta {
   font-size: 16px;
 }
 
+/* 「確認する」タブの編集フォーム: 左右に余白、入力欄は広く、ボタンは控えめに。 */
+.section-edit {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.section-edit-q {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  font-weight: 600;
+  color: var(--ink);
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.section-edit-chapter {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.section-edit .manuscript-input {
+  min-height: 46vh;
+  margin-top: 14px;
+}
+
+.section-edit .edit-actions {
+  margin-top: 16px;
+}
+
+.section-edit .submit-btn {
+  margin-top: 0;
+  width: auto;
+  flex: 0 0 auto;
+  align-self: auto;
+  padding: 12px 30px;
+  font-size: 17px;
+}
+
+.section-edit .cancel-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
 .manuscript.raw {
   color: var(--muted);
   font-size: 17px;
