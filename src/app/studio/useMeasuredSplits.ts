@@ -60,8 +60,10 @@ function measure(
   pager: HTMLElement,
   sections: SectionInput[],
 ): Record<string, string[]> | null {
-  const innerEl = pager.querySelector<HTMLElement>(".leaf-inner");
-  const bodyEl = pager.querySelector<HTMLElement>(".leaf-body");
+  // 章扉・「次の質問」ページの .leaf-inner は width/height が auto なので測ってはいけない。
+  // 必ず本文ページ（.section-leaf）の実寸を使う。
+  const innerEl = pager.querySelector<HTMLElement>(".section-leaf .leaf-inner");
+  const bodyEl = pager.querySelector<HTMLElement>(".section-leaf .leaf-body");
   if (!innerEl || !bodyEl) return null;
   const innerW = innerEl.clientWidth;
   const innerH = innerEl.clientHeight;
@@ -72,7 +74,7 @@ function measure(
   document.body.appendChild(mBody);
 
   // 1ページ目は質問見出しが幅を取るので、そのぶんを差し引く。
-  const qEl = pager.querySelector<HTMLElement>(".leaf-q");
+  const qEl = pager.querySelector<HTMLElement>(".section-leaf .leaf-q");
   const qStyle = qEl ? getComputedStyle(qEl) : null;
   const mQ = qStyle ? makeMeasurer(qStyle, innerH, "0px") : null;
   if (mQ) document.body.appendChild(mQ);
@@ -99,6 +101,12 @@ function measure(
     const firstCap = fitLen(mBody, text, 0, page1Avail);
     const contCap =
       firstCap < text.length ? fitLen(mBody, text, firstCap, innerW) : firstCap;
+    // 異常に小さい容量＝測定失敗。空ページ量産を避け、heuristicに委ねる。
+    if (firstCap < 24 || contCap < 24) {
+      mBody.remove();
+      mQ?.remove();
+      return null;
+    }
     // 実測した容量で均等割り（最後だけスカスカ＝極小ページを防ぐ）。
     result[sec.key] = paginateBody(text, firstCap, Math.max(1, contCap));
   }
