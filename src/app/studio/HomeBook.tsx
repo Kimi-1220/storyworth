@@ -15,6 +15,7 @@ export type BookItem =
       kind: "section";
       key: string;
       promptId: string;
+      category: string;
       question: string;
       body: string;
       edited: boolean;
@@ -57,18 +58,21 @@ export default function HomeBook({ items }: { items: BookItem[] }) {
           const pages = splits?.[it.key] ?? paginateBody(it.body);
           return pages.map((p, i) => (
             <article className="leaf section-leaf" key={`${it.key}-${i}`}>
+              <div className="leaf-head">
+                <span className="leaf-tag">
+                  <span className="tag-chapter">{it.category}</span> ／{" "}
+                  {it.question}
+                </span>
+                <Link
+                  className="leaf-edit"
+                  href={`/studio/prompts/${it.promptId}`}
+                >
+                  ✎ {it.edited ? "編集済み" : "直す"}
+                </Link>
+              </div>
               <div className="leaf-inner">
-                {i === 0 && <h4 className="leaf-q">{it.question}</h4>}
                 <p className="leaf-body">{p}</p>
               </div>
-              {pages.length > 1 && (
-                <span className="leaf-folio">
-                  {i + 1} / {pages.length}
-                </span>
-              )}
-              <Link className="leaf-edit" href={`/studio/prompts/${it.promptId}`}>
-                ✎ {it.edited ? "編集済み" : "直す"}
-              </Link>
             </article>
           ));
         })}

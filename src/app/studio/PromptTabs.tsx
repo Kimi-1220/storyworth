@@ -67,6 +67,7 @@ export default function PromptTabs({
             <>
               <SectionEditor
                 promptId={promptId}
+                category={category}
                 question={plainQuestion}
                 body={section.body}
               />
