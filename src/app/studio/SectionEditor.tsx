@@ -40,7 +40,7 @@ export default function SectionEditor({
             <article className="leaf section-leaf" key={i}>
               <div className="leaf-head">
                 <span className="leaf-tag">
-                  <span className="tag-chapter">{category}</span>
+                  <span className="tag-chapter">{category}</span> ／ {question}
                 </span>
                 <button
                   type="button"
