@@ -91,13 +91,13 @@ export default function HomeBook({ items }: { items: BookItem[] }) {
   return (
     <div className="book">
       <div className="book-toolbar">
-        {items[0] && (
+        {nextKey && (
           <button
             type="button"
             className="book-nav-btn"
-            onClick={() => scrollToKey(items[0].key)}
+            onClick={() => scrollToKey(nextKey)}
           >
-            ← 先頭へ
+            最後の質問へ →
           </button>
         )}
         <button
@@ -107,13 +107,13 @@ export default function HomeBook({ items }: { items: BookItem[] }) {
         >
           ☰ 目次から選ぶ
         </button>
-        {nextKey && (
+        {items[0] && (
           <button
             type="button"
             className="book-nav-btn"
-            onClick={() => scrollToKey(nextKey)}
+            onClick={() => scrollToKey(items[0].key)}
           >
-            最後の質問へ →
+            ← 先頭へ
           </button>
         )}
       </div>
