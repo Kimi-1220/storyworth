@@ -136,13 +136,32 @@ export function useMeasuredSplits(
   const sig = sections.map((s) => `${s.key}:${s.body.length}`).join("|");
 
   useEffect(() => {
+    let cancelled = false;
     const run = () => {
+      if (cancelled) return;
       const el = pagerRef.current;
       if (!el) return;
       const res = measure(el, sections);
+      // 測れた時だけ採用。測れない（レイアウト未確定・フォント未読込）間は
+      // ヒューリスティックのままにし、確定後の再測定で max-fill に置き換える。
       if (res) setSplits(res);
     };
+
     const raf = requestAnimationFrame(run);
+
+    // ページャの実寸が確定/変化した時に測り直す。タブ切替直後など、初回の
+    // rAF が早すぎて測れなかったケースを ResizeObserver の初回通知で拾う。
+    let ro: ResizeObserver | undefined;
+    if (typeof ResizeObserver !== "undefined" && pagerRef.current) {
+      ro = new ResizeObserver(() => run());
+      ro.observe(pagerRef.current);
+    }
+
+    // 明朝など本文フォントの読み込みで字幅が変わるので、確定後に測り直す。
+    if (typeof document !== "undefined" && document.fonts?.ready) {
+      document.fonts.ready.then(run).catch(() => {});
+    }
+
     let t: ReturnType<typeof setTimeout>;
     const onResize = () => {
       clearTimeout(t);
@@ -151,8 +170,10 @@ export function useMeasuredSplits(
     window.addEventListener("resize", onResize);
     window.addEventListener("orientationchange", onResize);
     return () => {
+      cancelled = true;
       cancelAnimationFrame(raf);
       clearTimeout(t);
+      ro?.disconnect();
       window.removeEventListener("resize", onResize);
       window.removeEventListener("orientationchange", onResize);
     };
