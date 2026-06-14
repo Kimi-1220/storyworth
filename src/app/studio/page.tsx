@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { getStudioStoryteller } from "@/lib/auth";
 import { paginateBody } from "@/lib/paginate";
+import AnswerNextButton from "@/app/studio/AnswerNextButton";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,7 @@ function kanjiNum(n: number): string {
   return (tens > 1 ? d[tens] : "") + "十" + (n % 10 ? d[n % 10] : "");
 }
 
-// 本ページャ用の1枚（章扉 or 質問ページ）。
+// 本ページャ用の1枚（章扉 / 既出の質問ページ / 末尾の「次の質問」）。
 type Leaf =
   | { kind: "chapter"; key: string; num: string; title: string }
   | {
@@ -27,7 +28,8 @@ type Leaf =
       edited: boolean;
       idx: number;
       total: number;
-    };
+    }
+  | { kind: "next"; key: string; question: string };
 
 export default async function StudioHome({
   searchParams,
@@ -58,35 +60,32 @@ export default async function StudioHome({
     );
   }
 
-  const [totalQuestions, categoryGroups, prompts, chapters, sections] =
-    await Promise.all([
-      prisma.question.count(),
-      prisma.question.findMany({
-        distinct: ["category"],
-        select: { category: true },
-      }),
-      prisma.prompt.findMany({
-        where: { storytellerId: me.id },
-        include: {
-          question: true,
-          _count: { select: { answers: true } },
-        },
-        orderBy: { createdAt: "desc" },
-      }),
-      prisma.chapter.findMany({
-        where: { storytellerId: me.id },
-      }),
-      prisma.section.findMany({
-        where: { storytellerId: me.id },
-        include: { prompt: { include: { question: true } } },
-        orderBy: { sortOrder: "asc" },
-      }),
-    ]);
+  const [prompts, chapters, sections] = await Promise.all([
+    prisma.prompt.findMany({
+      where: { storytellerId: me.id },
+      include: { question: true },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.chapter.findMany({
+      where: { storytellerId: me.id },
+    }),
+    prisma.section.findMany({
+      where: { storytellerId: me.id },
+      include: { prompt: { include: { question: true } } },
+      orderBy: { sortOrder: "asc" },
+    }),
+  ]);
 
+  // 次に答える質問: 回答待ちの出題があればそれ、なければ次の未出題の質問。
   const open = prompts.find((p) => p.status === "open");
-  const answered = prompts.filter((p) => p.status === "answered").length;
-  const remaining = Math.max(totalQuestions - answered, 0);
-  const totalChapters = categoryGroups.length;
+  let nextQuestion: { text: string } | null = open?.question ?? null;
+  if (!nextQuestion) {
+    nextQuestion = await prisma.question.findFirst({
+      where: { id: { notIn: prompts.map((p) => p.questionId) } },
+      orderBy: { sortOrder: "asc" },
+      select: { text: true },
+    });
+  }
 
   // セクションを章（カテゴリ）ごとにまとめる。章の並びは最小sortOrderで決める。
   const titleByCategory = new Map(chapters.map((c) => [c.category, c.title]));
@@ -131,6 +130,11 @@ export default async function StudioHome({
     });
   });
 
+  // 本の最後に「次の質問」ページを置く（未回答なので答えるボタンを大きく）。
+  if (nextQuestion) {
+    leaves.push({ kind: "next", key: "next", question: nextQuestion.text });
+  }
+
   return (
     <div className="studio">
       {/* 表紙モック: 初日から本人を「著者」として載せる */}
@@ -140,47 +144,36 @@ export default async function StudioHome({
         <p className="cover-author">著 {me.name}</p>
       </div>
 
-      <div className="progress">
-        <p>
-          これまでに <strong>{answered}</strong> の質問にお答えいただきました。
-          {remaining > 0 ? (
-            <>本まで、あと {remaining} 問です。</>
-          ) : (
-            <>すべての質問にお答えいただきました。</>
-          )}
-        </p>
-        <p className="muted">
-          書きはじめた章: {chapterGroups.length} 章 / 全 {totalChapters} 章
-        </p>
-      </div>
-
-      {open && (
-        <div className="studio-card current-question">
-          <p className="muted">今週の質問</p>
-          <p className="question-text">{open.novelText ?? open.question.text}</p>
-          <Link className="cta" href={`/studio/prompts/${open.id}`}>
-            📝 / 🎙 書いて、または話して答える
-          </Link>
-        </div>
-      )}
-
-      {chapterGroups.length > 0 && (
+      {leaves.length > 0 && (
         <section className="chapters">
           <h2 className="chapters-title">育っていく、あなたの本</h2>
           {/* 一冊の本を横にめくって読む（右→左／和書の向き）。
-              章扉ページ→質問ページ（長文は複数ページ）をページ送りで並べる。 */}
+              章扉→既出の質問ページ→末尾に「次の質問」をページ送りで並べる。 */}
           <div className="book">
             <div className="book-pager">
-              {leaves.map((lf) =>
-                lf.kind === "chapter" ? (
-                  <div className="leaf chapter-leaf" key={lf.key}>
-                    <div className="leaf-inner">
-                      <p className="chapter-num">第{lf.num}章</p>
-                      <h3 className="chapter-title">{lf.title}</h3>
-                      <span className="chapter-orn">❦</span>
+              {leaves.map((lf) => {
+                if (lf.kind === "chapter") {
+                  return (
+                    <div className="leaf chapter-leaf" key={lf.key}>
+                      <div className="leaf-inner">
+                        <p className="chapter-num">第{lf.num}章</p>
+                        <h3 className="chapter-title">{lf.title}</h3>
+                        <span className="chapter-orn">❦</span>
+                      </div>
                     </div>
-                  </div>
-                ) : (
+                  );
+                }
+                if (lf.kind === "next") {
+                  return (
+                    <article className="leaf next-leaf" key={lf.key}>
+                      <div className="leaf-inner">
+                        <h4 className="leaf-q">{lf.question}</h4>
+                      </div>
+                      <AnswerNextButton />
+                    </article>
+                  );
+                }
+                return (
                   <article className="leaf section-leaf" key={lf.key}>
                     <div className="leaf-inner">
                       {lf.question && <h4 className="leaf-q">{lf.question}</h4>}
@@ -198,14 +191,13 @@ export default async function StudioHome({
                       ✎ {lf.edited ? "編集済み" : "直す"}
                     </Link>
                   </article>
-                ),
-              )}
+                );
+              })}
             </div>
             <p className="book-hint muted">← 横にめくって読む</p>
           </div>
         </section>
       )}
-
     </div>
   );
 }
