@@ -124,9 +124,9 @@ export default async function StudioHome({
 
       {items.length > 0 && (
         <section className="chapters">
-          <h2 className="chapters-title">育っていく、あなたの本</h2>
           {/* 一冊の本を横にめくって読む（右→左／和書の向き）。
-              ページ分割は実測ベースで画面にぴったり収める（HomeBook）。 */}
+              ページ分割は実測ベースで画面にぴったり収める（HomeBook）。
+              長くなっても目次モーダル・最後の質問ボタンで目的のページに飛べる。 */}
           <HomeBook items={items} />
         </section>
       )}
