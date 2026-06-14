@@ -14,8 +14,23 @@ body {
   margin: 0;
   color: var(--ink);
   background: var(--paper);
-  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+  /* UI・チャット・ボタンは読みやすいゴシック（サンセリフ）を既定に。 */
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", system-ui,
+    sans-serif;
   line-height: 1.8;
+}
+
+/* 明朝は本のプレビュー（表紙・ページ本文・原稿）だけに限定する。
+   ボタンやチャットなどの操作系はゴシックのまま読みやすく保つ。 */
+.book-cover,
+.chapter-num,
+.chapter-title,
+.chapter-orn,
+.leaf-tag,
+.leaf-q,
+.leaf-body,
+.manuscript {
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
 }
 
 .site-header {
@@ -902,10 +917,26 @@ body:has(.prompt-page) .container {
   padding: 4px 2px 12px;
 }
 
-.chat-day {
+/* チャット冒頭の見出し: 章タイトル＋本に載る質問文（小さめ）。 */
+.chat-head {
   text-align: center;
+  margin: 4px 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.chat-chapter {
+  font-size: 13px;
   letter-spacing: 3px;
-  margin: 4px 0 14px;
+  color: var(--accent);
+  margin: 0 0 4px;
+}
+
+.chat-question {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 0;
 }
 
 .interview .bubble {
