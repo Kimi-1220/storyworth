@@ -14,9 +14,8 @@ export default function AnswerNextButton() {
       disabled={pending}
       onClick={() => start(async () => { await answerNextQuestion(); })}
     >
-      <span className="answer-cta-main">📝 / 🎙 この質問に答える</span>
-      <span className="answer-cta-sub">
-        {pending ? "用意しています…" : "書いても、話してもOK"}
+      <span className="answer-cta-main">
+        {pending ? "用意しています…" : "この質問に答える"}
       </span>
     </button>
   );

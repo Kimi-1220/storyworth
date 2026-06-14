@@ -97,7 +97,7 @@ export default function HomeBook({ items }: { items: BookItem[] }) {
             className="book-nav-btn"
             onClick={() => scrollToKey(nextKey)}
           >
-            最後の質問へ →
+            ＜ 最後の質問へ
           </button>
         )}
         <button
@@ -113,7 +113,7 @@ export default function HomeBook({ items }: { items: BookItem[] }) {
             className="book-nav-btn"
             onClick={() => scrollToKey(items[0].key)}
           >
-            ← 先頭へ
+            先頭へ ＞
           </button>
         )}
       </div>
