@@ -7,17 +7,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// 語り手（親・祖母など、質問に答える人）
+// アカウント（口座の持ち主＝購入者）。登録導線[3]で決済より前に作られる。
+// アンカーは email。Path A（self）はアカウント＝語り手、Path B（gift）は
+// 贈り主が語り手を1人以上所有する。→ docs/registration-flow.md「データモデルへの示唆」
+model Account {
+  id              String        @id @default(cuid())
+  email           String        @unique // 登録のアンカー。Stripe任せにせず自前で先に取る
+  fullName        String
+  kind            String // "self"（自分の自伝）| "gift"（家族への贈り物）
+  plan            String // "basic" | "standard" | "premium"
+  copies          Int           @default(1) // 発行部数（価格の数量ライン）
+  status          String        @default("unpaid") // "unpaid"（カゴ落ち）| "paid"
+  notifyChannel   String? // "line" | "email"（ギフト時：贈り主への進捗・完成連絡）
+  notifyEmail     String? // 贈り主の連絡先メール（通常はemailと同じ。別宛先も可）
+  stripeSessionId String? // 決済セッションID（モック時は "mock_..."）
+  paidAt          DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  storytellers    Storyteller[]
+}
+
+// 語り手（親・祖母など、質問に答える人。self の場合は購入者本人）
 model Storyteller {
-  id         String      @id @default(cuid())
-  name       String
-  lineUserId String?     @unique
-  linkCode   String      @unique // LINE連携用の6桁コード
-  createdAt  DateTime    @default(now())
-  prompts    Prompt[]
-  magicLinks MagicLink[]
-  chapters   Chapter[]
-  sections   Section[]
+  id            String      @id @default(cuid())
+  name          String
+  lineUserId    String?     @unique
+  linkCode      String      @unique // LINE連携用の6桁コード
+  account       Account?    @relation(fields: [accountId], references: [id])
+  accountId     String?
+  relationship  String      @default("self") // "self" | "母" | "父" | "祖母" | "祖父" | "その他"
+  status        String      @default("active") // "active" | "pending-invite"（ギフトで未着地）
+  inviteMethod  String? // "line" | "email" | "print"（[4]の“予告”で選ぶ送信手段）
+  inviteMessage String? // 語り手へ届ける送信文言（prefill編集後）
+  notifyChannel String? // "line" | "email"（質問配信チャネル）
+  notifyEmail   String? // 質問配信先メール
+  phone         String? // プレミアム電話取材の連絡先
+  callDay       String? // 取材の曜日
+  callTime      String? // 取材の時間帯
+  createdAt     DateTime    @default(now())
+  prompts       Prompt[]
+  magicLinks    MagicLink[]
+  chapters      Chapter[]
+  sections      Section[]
+
+  @@index([accountId])
 }
 
 // 執筆スタジオへのマジックリンク（1回限り・短命トークン）。

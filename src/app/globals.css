@@ -1232,3 +1232,327 @@ body:has(.prompt-page) .container {
   font-weight: 600;
   margin-bottom: 6px;
 }
+
+/* ===== 登録／課金導線 ===== */
+
+/* 進捗ステッパー */
+.stepper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+}
+
+.stepper .step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.stepper .step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  font-size: 12px;
+}
+
+.stepper .step.active {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.stepper .step.active .step-num {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.stepper .step.done .step-num {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* プランカード */
+.plan-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin: 20px 0;
+}
+
+.plan-card {
+  position: relative;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 24px 22px;
+  display: flex;
+  flex-direction: column;
+}
+
+.plan-card.highlight {
+  border-color: var(--accent);
+  box-shadow: 0 8px 24px rgba(176, 101, 58, 0.12);
+}
+
+.plan-tag {
+  position: absolute;
+  top: -11px;
+  left: 22px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 12px;
+  border-radius: 999px;
+}
+
+.plan-name {
+  font-size: 20px;
+  margin: 0 0 4px;
+}
+
+.plan-tagline {
+  color: var(--muted);
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+
+.plan-price {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 14px;
+}
+
+.plan-unit {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+  margin-left: 6px;
+}
+
+.plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 18px;
+  flex: 1 1 auto;
+}
+
+.plan-features li {
+  font-size: 14px;
+  padding: 4px 0 4px 20px;
+  position: relative;
+}
+
+.plan-features li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+
+.plan-cta {
+  text-align: center;
+}
+
+/* 用途フォーク */
+.fork-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  margin: 20px 0;
+}
+
+.fork-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.fork-card h2 {
+  margin-top: 0;
+}
+
+.rel-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.rel-chip {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 16px;
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.rel-chip.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.cta.disabled {
+  background: var(--line);
+  color: var(--muted);
+  pointer-events: none;
+}
+
+/* フォーム部品 */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field > span,
+.choice-set legend {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+input[type="email"],
+input[type="tel"],
+select {
+  font: inherit;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.choice-set,
+.channel-set {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 400;
+  font-size: 16px;
+}
+
+.phone-when {
+  display: flex;
+  gap: 12px;
+}
+
+.phone-when .field {
+  flex: 1;
+}
+
+/* チャネル選択時だけ詳細を出す（:has 対応ブラウザ）。
+   未対応環境では常に表示されるため、入力自体は任意で安全側に倒す。 */
+.reveal {
+  margin: -2px 0 4px 28px;
+}
+
+.channel-set .email-reveal,
+.channel-set .line-reveal {
+  display: none;
+}
+
+.channel-set:has(input[value="email"]:checked) .email-reveal {
+  display: block;
+}
+
+.channel-set:has(input[value="line"]:checked) .line-reveal {
+  display: block;
+}
+
+/* 注文確認 */
+.order-summary {
+  margin: 16px 0;
+}
+
+.order-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0;
+}
+
+.order-row.total {
+  font-size: 18px;
+  padding-top: 10px;
+}
+
+.pay-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 18px;
+  align-self: stretch;
+  margin: 8px 0;
+}
+
+.mock-card {
+  background: #f6f1e8;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 14px 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.mock-card-row {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.reg-note {
+  margin-top: 16px;
+}
+
+.copies-select {
+  max-width: 320px;
+}
+
+/* LP のサンプル */
+.sample-q {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.sample-q li {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 17px;
+}
+
+.book-cover.preview {
+  max-width: 320px;
+  margin: 8px auto 16px;
+}
+
+.book-cover.preview .cover-title {
+  font-size: 24px;
+}
+
+.plan-mini {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.plan-mini li {
+  padding: 6px 0;
+}

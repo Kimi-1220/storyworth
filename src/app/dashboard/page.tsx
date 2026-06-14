@@ -35,6 +35,12 @@ export default async function Dashboard() {
         <div className="card" key={s.id}>
           <Link href={`/storytellers/${s.id}`}>{s.name}</Link>
           <span className="badge">
+            {s.relationship === "self" ? "自分の自伝" : `${s.relationship}へ贈る`}
+          </span>
+          {s.status === "pending-invite" && (
+            <span className="badge">招待待ち</span>
+          )}
+          <span className="badge">
             {s.lineUserId ? "LINE連携済み" : "LINE未連携"}
           </span>
           <span className="badge">出題 {s._count.prompts}問</span>

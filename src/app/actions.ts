@@ -1,22 +1,12 @@
 "use server";
 
-import { randomInt } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { mediaTypeOf, saveMedia } from "@/lib/storage";
 import { sendNextQuestion } from "@/lib/prompts";
 import { createMagicLink } from "@/lib/auth";
-
-async function uniqueLinkCode(): Promise<string> {
-  for (;;) {
-    const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
-    const exists = await prisma.storyteller.findUnique({
-      where: { linkCode: code },
-    });
-    if (!exists) return code;
-  }
-}
+import { uniqueLinkCode } from "@/lib/storyteller";
 
 export async function createStoryteller(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim();
