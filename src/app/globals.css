@@ -455,6 +455,53 @@ a.cta {
   opacity: 0.7;
 }
 
+/* 末尾の「次の質問」ページ: 質問（右・縦組み）＋大きな回答ボタン（左） */
+.next-leaf {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: stretch;
+  gap: 18px;
+}
+
+.next-leaf .leaf-inner {
+  flex: 0 0 auto;
+  width: auto;
+  height: 100%;
+}
+
+.answer-cta {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0;
+  padding: 24px 16px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  font: inherit;
+  cursor: pointer;
+  text-align: center;
+}
+
+.answer-cta:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.answer-cta-main {
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.answer-cta-sub {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
 /* ページ隅の「直す」操作（縦組みの邪魔をしない左下に） */
 .leaf-edit {
   position: absolute;

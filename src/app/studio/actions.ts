@@ -1,12 +1,51 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { getStudioStoryteller } from "@/lib/auth";
 import { mediaTypeOf, saveMedia } from "@/lib/storage";
 import { transcribeAudio } from "@/lib/transcribe";
-import { generateFollowups, generateReaction } from "@/lib/llm";
+import {
+  generateFollowups,
+  generateReaction,
+  novelizeQuestion,
+} from "@/lib/llm";
 import { regenerateSection } from "@/lib/sections";
+
+// 「次の質問に答える」: 回答待ちの出題があればそこへ、なければ次の未出題の質問の
+// Prompt を作ってそのスタジオへ遷移する（LINE通知は送らない＝本人がもう開いている）。
+export async function answerNextQuestion() {
+  const me = await getStudioStoryteller();
+  if (!me) redirect("/studio");
+
+  const open = await prisma.prompt.findFirst({
+    where: { storytellerId: me.id, status: "open" },
+    orderBy: { createdAt: "desc" },
+  });
+  if (open) redirect(`/studio/prompts/${open.id}`);
+
+  const asked = await prisma.prompt.findMany({
+    where: { storytellerId: me.id },
+    select: { questionId: true },
+  });
+  const question = await prisma.question.findFirst({
+    where: { id: { notIn: asked.map((a) => a.questionId) } },
+    orderBy: { sortOrder: "asc" },
+  });
+  if (!question) redirect("/studio");
+
+  const novelText = await novelizeQuestion(question.text, question.category);
+  const prompt = await prisma.prompt.create({
+    data: {
+      storytellerId: me.id,
+      questionId: question.id,
+      novelText,
+      sentAt: new Date(),
+    },
+  });
+  redirect(`/studio/prompts/${prompt.id}`);
+}
 
 // 執筆スタジオから回答を受け取る。
 // テキスト（書く）/ 録音音声（話す）→ 文字起こし、写真添付に対応。
