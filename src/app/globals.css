@@ -798,6 +798,8 @@ a.cta {
 .section-edit .manuscript-input {
   min-height: 46vh;
   margin-top: 14px;
+  /* 本に載る文章なので、編集中も本文プレビューと同じ明朝で。 */
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
 }
 
 .section-edit .edit-actions {
