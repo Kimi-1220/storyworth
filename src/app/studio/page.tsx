@@ -1,8 +1,6 @@
-import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { getStudioStoryteller } from "@/lib/auth";
-import { paginateBody } from "@/lib/paginate";
-import AnswerNextButton from "@/app/studio/AnswerNextButton";
+import HomeBook, { type BookItem } from "@/app/studio/HomeBook";
 
 export const dynamic = "force-dynamic";
 
@@ -15,21 +13,6 @@ function kanjiNum(n: number): string {
   const tens = Math.floor(n / 10);
   return (tens > 1 ? d[tens] : "") + "十" + (n % 10 ? d[n % 10] : "");
 }
-
-// 本ページャ用の1枚（章扉 / 既出の質問ページ / 末尾の「次の質問」）。
-type Leaf =
-  | { kind: "chapter"; key: string; num: string; title: string }
-  | {
-      kind: "page";
-      key: string;
-      promptId: string;
-      question: string | null;
-      body: string;
-      edited: boolean;
-      idx: number;
-      total: number;
-    }
-  | { kind: "next"; key: string; question: string };
 
 export default async function StudioHome({
   searchParams,
@@ -104,35 +87,29 @@ export default async function StudioHome({
     }))
     .sort((a, b) => a.order - b.order);
 
-  // 本を1枚ずつのページ（章扉＋質問ページ。長い本文は複数ページに分割）に展開。
-  const leaves: Leaf[] = [];
+  // 本の構成要素（章扉 → 既出の質問 → 末尾に「次の質問」）。
+  // 本文のページ分割は実測ベースでクライアント側（HomeBook）が行う。
+  const items: BookItem[] = [];
   chapterGroups.forEach((c, ci) => {
-    leaves.push({
+    items.push({
       kind: "chapter",
       key: `ch-${c.category}`,
       num: kanjiNum(ci + 1),
       title: c.title,
     });
     c.sections.forEach((s) => {
-      const pages = paginateBody(s.body);
-      pages.forEach((p, pi) => {
-        leaves.push({
-          kind: "page",
-          key: `${s.id}-${pi}`,
-          promptId: s.promptId,
-          question: pi === 0 ? s.prompt.question.text : null,
-          body: p,
-          edited: s.edited,
-          idx: pi + 1,
-          total: pages.length,
-        });
+      items.push({
+        kind: "section",
+        key: s.id,
+        promptId: s.promptId,
+        question: s.prompt.question.text,
+        body: s.body,
+        edited: s.edited,
       });
     });
   });
-
-  // 本の最後に「次の質問」ページを置く（未回答なので答えるボタンを大きく）。
   if (nextQuestion) {
-    leaves.push({ kind: "next", key: "next", question: nextQuestion.text });
+    items.push({ kind: "next", key: "next", question: nextQuestion.text });
   }
 
   return (
@@ -144,58 +121,12 @@ export default async function StudioHome({
         <p className="cover-author">著 {me.name}</p>
       </div>
 
-      {leaves.length > 0 && (
+      {items.length > 0 && (
         <section className="chapters">
           <h2 className="chapters-title">育っていく、あなたの本</h2>
           {/* 一冊の本を横にめくって読む（右→左／和書の向き）。
-              章扉→既出の質問ページ→末尾に「次の質問」をページ送りで並べる。 */}
-          <div className="book">
-            <div className="book-pager">
-              {leaves.map((lf) => {
-                if (lf.kind === "chapter") {
-                  return (
-                    <div className="leaf chapter-leaf" key={lf.key}>
-                      <div className="leaf-inner">
-                        <p className="chapter-num">第{lf.num}章</p>
-                        <h3 className="chapter-title">{lf.title}</h3>
-                        <span className="chapter-orn">❦</span>
-                      </div>
-                    </div>
-                  );
-                }
-                if (lf.kind === "next") {
-                  return (
-                    <article className="leaf next-leaf" key={lf.key}>
-                      <div className="leaf-inner">
-                        <h4 className="leaf-q">{lf.question}</h4>
-                      </div>
-                      <AnswerNextButton />
-                    </article>
-                  );
-                }
-                return (
-                  <article className="leaf section-leaf" key={lf.key}>
-                    <div className="leaf-inner">
-                      {lf.question && <h4 className="leaf-q">{lf.question}</h4>}
-                      <p className="leaf-body">{lf.body}</p>
-                    </div>
-                    {lf.total > 1 && (
-                      <span className="leaf-folio">
-                        {lf.idx} / {lf.total}
-                      </span>
-                    )}
-                    <Link
-                      className="leaf-edit"
-                      href={`/studio/prompts/${lf.promptId}`}
-                    >
-                      ✎ {lf.edited ? "編集済み" : "直す"}
-                    </Link>
-                  </article>
-                );
-              })}
-            </div>
-            <p className="book-hint muted">← 横にめくって読む</p>
-          </div>
+              ページ分割は実測ベースで画面にぴったり収める（HomeBook）。 */}
+          <HomeBook items={items} />
         </section>
       )}
     </div>

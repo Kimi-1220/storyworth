@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { editSection } from "@/app/studio/actions";
 import { paginateBody } from "@/lib/paginate";
+import { useMeasuredSplits } from "@/app/studio/useMeasuredSplits";
 
 // 本のこのページ（セクション）を本人が直接書き直せるエディタ。
-// 読み表示はホームと同じ「全画面ページめくり」（縦組み・右→左・長文は自動ページ分割）。
+// 読み表示はホームと同じ「全画面ページめくり」（実測ベースで画面にぴったり）。
 // 編集に入ると横書きの原稿エディタになる。保存後はこの本文が土台になる。
 export default function SectionEditor({
   promptId,
@@ -21,12 +22,14 @@ export default function SectionEditor({
   const [text, setText] = useState(body);
   const [editing, setEditing] = useState(false);
   const [pending, startTransition] = useTransition();
+  const pagerRef = useRef<HTMLDivElement>(null);
+  const splits = useMeasuredSplits(pagerRef, [{ key: promptId, question, body }]);
 
   if (!editing) {
-    const pages = paginateBody(body);
+    const pages = splits?.[promptId] ?? paginateBody(body);
     return (
       <div className="book-read">
-        <div className="book-pager">
+        <div className="book-pager" ref={pagerRef}>
           {pages.map((p, i) => (
             <article className="leaf section-leaf" key={i}>
               <div className="leaf-inner">
