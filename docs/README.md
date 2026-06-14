@@ -5,6 +5,7 @@ storyworth（日本版）のドキュメント置き場。
 | ドキュメント | 内容 |
 | --- | --- |
 | [concept.md](./concept.md) | サービス企画書。プロダクトの肝2点（回答の充実度 / 小説のクオリティ） |
+| [registration-flow.md](./registration-flow.md) | 登録の導線設計。「だれの物語か（自分の自伝 / 家族への贈り物）」での分岐とオンボーディング |
 | [line-experience.md](./line-experience.md) | 肝①-通知層: LINE等の通知・関係づくり（リアクション・進捗共有・家族リマインド） |
 | [writing-studio.md](./writing-studio.md) | 肝①-執筆層: 自前Webスタジオでの書く/話す体験と「著者気分」の設計 |
 | [novel.md](./novel.md) | 肝②: 小説品質の設計（執筆パイプライン・章立て・文体・品質管理） |
