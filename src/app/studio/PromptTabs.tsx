@@ -42,14 +42,14 @@ export default function PromptTabs({
             className={tab === "interview" ? "stab active" : "stab"}
             onClick={() => setTab("interview")}
           >
-            取材
+            チャットで答える
           </button>
           <button
             type="button"
             className={tab === "book" ? "stab active" : "stab"}
             onClick={() => setTab("book")}
           >
-            本のこのページ
+            執筆する
           </button>
         </div>
       </header>
@@ -59,6 +59,7 @@ export default function PromptTabs({
           promptId={promptId}
           novelText={novelText}
           category={category}
+          question={plainQuestion}
           timeline={timeline}
         />
       ) : (

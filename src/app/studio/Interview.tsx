@@ -26,11 +26,13 @@ export default function Interview({
   promptId,
   novelText,
   category,
+  question,
   timeline,
 }: {
   promptId: string;
   novelText: string;
   category: string;
+  question: string;
   timeline: TLItem[];
 }) {
   const [echo, setEcho] = useState<string | null>(null);
@@ -60,7 +62,10 @@ export default function Interview({
   return (
     <div className="interview">
       <div className="chat-log">
-        <p className="chat-day">{category}</p>
+        <div className="chat-head">
+          <p className="chat-chapter">{category}</p>
+          <p className="chat-question">{question}</p>
+        </div>
         <div className="bubble ask">{novelText}</div>
 
         {timeline.map((m) => {

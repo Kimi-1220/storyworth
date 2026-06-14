@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { paginateBody } from "@/lib/paginate";
 import {
   useMeasuredSplits,
@@ -70,16 +70,36 @@ export default function HomeBook({ items }: { items: BookItem[] }) {
     };
   }
 
-  function scrollToKey(key: string) {
+  function scrollToKey(key: string, behavior: ScrollBehavior = "smooth") {
     const el = leafRefs.current.get(key);
     if (el) {
-      el.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+      el.scrollIntoView({ behavior, inline: "start", block: "nearest" });
     }
   }
+
+  // 開いた直後は「最後の質問」を表示しておく（毎回めくらず、続きから始められる）。
+  // ページ幅は実測分割（splits）に依存するので、確定してから一度だけ即時ジャンプする。
+  const didInitialScroll = useRef(false);
+  useEffect(() => {
+    if (didInitialScroll.current || !nextKey) return;
+    if (sections.length > 0 && !splits) return; // 分割待ち
+    scrollToKey(nextKey, "auto");
+    didInitialScroll.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [splits, nextKey]);
 
   return (
     <div className="book">
       <div className="book-toolbar">
+        {items[0] && (
+          <button
+            type="button"
+            className="book-nav-btn"
+            onClick={() => scrollToKey(items[0].key)}
+          >
+            ← 先頭へ
+          </button>
+        )}
         <button
           type="button"
           className="book-nav-btn"
