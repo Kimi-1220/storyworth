@@ -49,7 +49,7 @@ export default function PromptTabs({
             className={tab === "book" ? "stab active" : "stab"}
             onClick={() => setTab("book")}
           >
-            執筆する
+            確認する
           </button>
         </div>
       </header>
