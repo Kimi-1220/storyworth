@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, type RefObject } from "react";
-import { paginateBody } from "@/lib/paginate";
 
 // 実際に描画される1ページの大きさを測って、本文を「画面にぴったり収まる量」で分割する。
 // 縦組みは全角主体で字幅がほぼ均一なので、ページ容量（文字数）さえ実測できれば
@@ -90,6 +89,7 @@ function measure(
     );
   };
 
+  const trimEdges = (s: string) => s.replace(/^\n+/, "").replace(/\n+$/, "");
   const result: Record<string, string[]> = {};
   for (const sec of sections) {
     const text = sec.body.trim();
@@ -97,18 +97,29 @@ function measure(
       result[sec.key] = [""];
       continue;
     }
+    // 1ページ目は質問見出しのぶん幅が狭い。
     const page1Avail = Math.max(60, innerW - questionWidth(sec.question));
-    const firstCap = fitLen(mBody, text, 0, page1Avail);
-    const contCap =
-      firstCap < text.length ? fitLen(mBody, text, firstCap, innerW) : firstCap;
-    // 異常に小さい容量＝測定失敗。空ページ量産を避け、heuristicに委ねる。
-    if (firstCap < 24 || contCap < 24) {
+    const firstLen = fitLen(mBody, text, 0, page1Avail);
+    // 異常に小さい＝測定失敗。空ページ量産を避け heuristic に委ねる。
+    if (firstLen < 24) {
       mBody.remove();
       mQ?.remove();
       return null;
     }
-    // 実測した容量で均等割り（最後だけスカスカ＝極小ページを防ぐ）。
-    result[sec.key] = paginateBody(text, firstCap, Math.max(1, contCap));
+    // max-fill: 各ページを「収まる最大」まで詰める。fitLed は列を完全に
+    // 埋めた所で止まるので、左の余白も列の途中切れも出ない（最後のページのみ端数）。
+    const bounds = [0, firstLen];
+    let start = firstLen;
+    while (start < text.length) {
+      const len = Math.max(1, fitLen(mBody, text, start, innerW));
+      start += len;
+      bounds.push(start);
+    }
+    const pages: string[] = [];
+    for (let i = 0; i < bounds.length - 1; i++) {
+      pages.push(trimEdges(text.slice(bounds[i], bounds[i + 1])));
+    }
+    result[sec.key] = pages;
   }
 
   mBody.remove();
