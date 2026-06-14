@@ -576,7 +576,7 @@ body:has(.prompt-page) .site-header {
 }
 
 body:has(.prompt-page) .container {
-  padding: 0 24px;
+  padding: 0;
   max-width: 760px;
 }
 
@@ -589,7 +589,6 @@ body:has(.prompt-page) .container {
 /* 戻る＋2タブを1段にまとめた上部固定バー（背を低く） */
 .prompt-topbar {
   flex: 0 0 auto;
-  margin: 0 -24px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -637,11 +636,37 @@ body:has(.prompt-page) .container {
   min-height: 0;
 }
 
+/* コンテナ余白を0にしたぶん、はみ出す原因だった負マージンを使わず、
+   要素ごとに内側パディングで間合いを取る（横スクロールを根絶）。 */
+.prompt-page .chat-log {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.prompt-page .composer-dock {
+  margin: 0;
+}
+
 .prompt-body-scroll {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
-  padding-top: 14px;
+  padding: 14px 0;
+}
+
+/* 本タブのページャは画面幅ぴったり（負マージンのはみ出しをやめる） */
+.prompt-page .book-read .book-pager {
+  margin: 0;
+}
+
+.prompt-page .prompt-body-scroll > .muted,
+.prompt-page .book-read-hint {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.prompt-page .photos {
+  padding: 0 16px;
 }
 
 /* ===== 取材 / 本 タブ ===== */

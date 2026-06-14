@@ -15,14 +15,11 @@ export function paginateBody(
   let i = 0;
   let cap = firstCap;
   while (i < text.length) {
-    let chunk = text.slice(i, i + cap);
-    // ページ途中で切れる場合、近くに改行があれば段落の切れ目で割る。
-    if (i + cap < text.length) {
-      const nl = chunk.lastIndexOf("\n");
-      if (nl > cap * 0.5) chunk = chunk.slice(0, nl + 1);
-    }
-    pages.push(chunk.replace(/^\n+/, "").replace(/\n+$/, ""));
-    i += chunk.length;
+    // 文字数だけで区切る（段落の改行ではページを割らない）。
+    // ページの境目に来た改行は、先頭/末尾の空き列にならないよう表示時に落とす。
+    const chunk = text.slice(i, i + cap).replace(/^\n+/, "").replace(/\n+$/, "");
+    pages.push(chunk);
+    i += cap;
     cap = contCap;
   }
   return pages.length ? pages : [""];
