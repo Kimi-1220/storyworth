@@ -102,6 +102,7 @@ export default async function StudioHome({
         kind: "section",
         key: s.id,
         promptId: s.promptId,
+        category: c.category,
         question: s.prompt.question.text,
         body: s.body,
         edited: s.edited,

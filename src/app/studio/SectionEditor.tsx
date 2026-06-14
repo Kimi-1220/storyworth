@@ -11,10 +11,12 @@ import { useMeasuredSplits } from "@/app/studio/useMeasuredSplits";
 // 編集に入ると横書きの原稿エディタになる。保存後はこの本文が土台になる。
 export default function SectionEditor({
   promptId,
+  category,
   question,
   body,
 }: {
   promptId: string;
+  category: string;
   question: string;
   body: string;
 }) {
@@ -27,33 +29,33 @@ export default function SectionEditor({
 
   if (!editing) {
     const pages = splits?.[promptId] ?? paginateBody(body);
+    const startEditing = () => {
+      setText(body);
+      setEditing(true);
+    };
     return (
       <div className="book-read">
         <div className="book-pager" ref={pagerRef}>
           {pages.map((p, i) => (
             <article className="leaf section-leaf" key={i}>
+              <div className="leaf-head">
+                <span className="leaf-tag">
+                  <span className="tag-chapter">{category}</span> ／ {question}
+                </span>
+                <button
+                  type="button"
+                  className="leaf-edit"
+                  onClick={startEditing}
+                >
+                  ✎ 直す
+                </button>
+              </div>
               <div className="leaf-inner">
-                {i === 0 && <h4 className="leaf-q">{question}</h4>}
                 <p className="leaf-body">{p}</p>
               </div>
-              {pages.length > 1 && (
-                <span className="leaf-folio">
-                  {i + 1} / {pages.length}
-                </span>
-              )}
             </article>
           ))}
         </div>
-        <button
-          type="button"
-          className="edit-btn book-edit-btn"
-          onClick={() => {
-            setText(body);
-            setEditing(true);
-          }}
-        >
-          ✎ この文章を直す
-        </button>
       </div>
     );
   }

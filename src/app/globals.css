@@ -411,12 +411,48 @@ a.cta {
 
 .leaf-body {
   font-size: 16px;
-  line-height: 2;
+  line-height: 1.8;
   letter-spacing: 0.02em;
   text-indent: 1em;
   margin: 0;
   white-space: pre-wrap;
   color: #3a342b;
+}
+
+/* 本文ページ: 上に細いヘッダー（左=章/質問、右=直す）＋ 下に全幅の本文。 */
+.section-leaf {
+  display: flex;
+  flex-direction: column;
+}
+
+.leaf-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.leaf-tag {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.leaf-tag .tag-chapter {
+  color: var(--accent);
+}
+
+.section-leaf .leaf-inner {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 /* 章扉ページ：中央に 第◯章＋タイトル＋飾り */
@@ -502,29 +538,18 @@ a.cta {
   opacity: 0.9;
 }
 
-/* ページ隅の「直す」操作（縦組みの邪魔をしない左下に） */
+/* ヘッダー右上の「直す」操作 */
 .leaf-edit {
-  position: absolute;
-  left: 12px;
-  bottom: 10px;
+  flex: 0 0 auto;
   font-size: 12px;
   color: var(--accent);
   text-decoration: none;
-  background: rgba(253, 251, 246, 0.85);
-  padding: 2px 7px;
-  border-radius: 6px;
-}
-
-/* ページ番号（柱）。本文が複数ページに渡るときだけ下中央に。 */
-.leaf-folio {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 10px;
-  text-align: center;
-  font-size: 12px;
-  letter-spacing: 1px;
-  color: var(--muted);
+  white-space: nowrap;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .book-hint {
