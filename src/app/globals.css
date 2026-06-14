@@ -518,7 +518,7 @@ a.cta {
 .next-leaf {
   display: flex;
   flex-direction: row-reverse;
-  align-items: stretch;
+  align-items: center;
   gap: 18px;
 }
 
