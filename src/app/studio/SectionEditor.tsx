@@ -40,7 +40,7 @@ export default function SectionEditor({
             <article className="leaf section-leaf" key={i}>
               <div className="leaf-head">
                 <span className="leaf-tag">
-                  <span className="tag-chapter">{category}</span> ／ {question}
+                  <span className="tag-chapter">{category}</span>
                 </span>
                 <button
                   type="button"
@@ -51,6 +51,7 @@ export default function SectionEditor({
                 </button>
               </div>
               <div className="leaf-inner">
+                {i === 0 && <h4 className="leaf-q">{question}</h4>}
                 <p className="leaf-body">{p}</p>
               </div>
             </article>

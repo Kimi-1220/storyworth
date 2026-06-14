@@ -60,8 +60,7 @@ export default function HomeBook({ items }: { items: BookItem[] }) {
             <article className="leaf section-leaf" key={`${it.key}-${i}`}>
               <div className="leaf-head">
                 <span className="leaf-tag">
-                  <span className="tag-chapter">{it.category}</span> ／{" "}
-                  {it.question}
+                  <span className="tag-chapter">{it.category}</span>
                 </span>
                 <Link
                   className="leaf-edit"
@@ -71,6 +70,7 @@ export default function HomeBook({ items }: { items: BookItem[] }) {
                 </Link>
               </div>
               <div className="leaf-inner">
+                {i === 0 && <h4 className="leaf-q">{it.question}</h4>}
                 <p className="leaf-body">{p}</p>
               </div>
             </article>
