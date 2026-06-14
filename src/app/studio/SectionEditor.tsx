@@ -74,6 +74,10 @@ export default function SectionEditor({
 
   return (
     <div className="section-edit">
+      <p className="section-edit-q">
+        <span className="section-edit-chapter">{category}</span>
+        {question}
+      </p>
       <textarea
         className="manuscript-input"
         value={text}
