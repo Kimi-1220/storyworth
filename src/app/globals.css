@@ -993,11 +993,11 @@ body:has(.prompt-page) .container {
 .interview .bubble {
   max-width: 86%;
   width: fit-content;
-  padding: 13px 17px;
-  margin: 12px 0;
+  padding: 12px 16px;
+  margin: 10px 0;
   border-radius: 18px;
-  line-height: 1.9;
-  font-size: 19px;
+  line-height: 1.85;
+  font-size: 16px;
   white-space: pre-wrap;
 }
 
@@ -1044,7 +1044,7 @@ body:has(.prompt-page) .container {
   align-items: center;
   gap: 10px;
   color: var(--muted);
-  font-size: 17px;
+  font-size: 14px;
 }
 
 .dots {
